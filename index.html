@@ -527,7 +527,8 @@ function toggleTheme(){
 // ═══════════════════════════════════
 function showPage(name){
   ['home','heal','admin'].forEach(p=>{
-    document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===name);
+    const el=document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1));
+    if(el) el.classList.toggle('active',p===name);
   });
   document.getElementById('navHome').classList.toggle('active',name==='home');
   document.getElementById('navHeal').classList.toggle('active',name==='heal');
@@ -536,7 +537,9 @@ function showPage(name){
 }
 
 // check for #admin in URL
-if(location.hash==='#admin') showPage('admin');
+window.addEventListener('load', function() {
+  if(location.hash==='#admin') showPage('admin');
+});
 
 // ═══════════════════════════════════
 // QUIZ
