@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,270 +7,309 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --warm-bg: #faf8f4;
-  --warm-surface: #f4f0e8;
-  --warm-border: rgba(160,130,90,0.15);
-  --warm-border-mid: rgba(160,130,90,0.28);
-  --ember: #c07a3a;
-  --ember-light: #e8a96a;
-  --text-primary: #2a2118;
-  --text-secondary: #7a6a55;
-  --text-tertiary: #b0a090;
-  --tag-bg: rgba(192,122,58,0.08);
-  --tag-text: #9a6030;
-  --serif: 'Noto Serif SC', Georgia, serif;
-  --sans: 'Noto Sans SC', system-ui, sans-serif;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --tr: 0.2s ease;
+[data-theme="light"] {
+  --bg:#faf8f4; --surface:#f4f0e8; --surface2:#edeade;
+  --border:rgba(160,130,90,0.15); --border-mid:rgba(160,130,90,0.28);
+  --ember:#c07a3a; --ember-light:#e8a96a; --ember-glow:rgba(232,169,106,0.25);
+  --text1:#2a2118; --text2:#7a6a55; --text3:#b0a090;
+  --tag-bg:rgba(192,122,58,0.08); --tag-text:#9a6030;
+  --overlay:rgba(42,33,24,0.5);
+  --breath-bg:rgba(192,122,58,0.06); --breath-stroke:rgba(192,122,58,0.35); --breath-fill:rgba(232,169,106,0.12);
 }
-html { scroll-behavior: smooth; }
-body { font-family: var(--sans); background: var(--warm-bg); color: var(--text-primary); font-size: 15px; line-height: 1.6; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+[data-theme="dark"] {
+  --bg:#1a1510; --surface:#231e17; --surface2:#2c261e;
+  --border:rgba(200,160,100,0.12); --border-mid:rgba(200,160,100,0.22);
+  --ember:#e8a96a; --ember-light:#f0c090; --ember-glow:rgba(232,169,106,0.18);
+  --text1:#f0ead8; --text2:#b8a888; --text3:#7a6a50;
+  --tag-bg:rgba(232,169,106,0.1); --tag-text:#e8a96a;
+  --overlay:rgba(0,0,0,0.7);
+  --breath-bg:rgba(232,169,106,0.04); --breath-stroke:rgba(232,169,106,0.3); --breath-fill:rgba(232,169,106,0.08);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:var(--text1);font-size:15px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased;transition:background .4s,color .3s}
 
 /* NAV */
-nav { position: sticky; top: 0; z-index: 100; background: rgba(250,248,244,0.92); border-bottom: 0.5px solid var(--warm-border); padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px); }
-.logo { font-family: var(--serif); font-size: 16px; font-weight: 400; color: var(--text-primary); display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.logo-flame { width: 18px; height: 22px; }
-.nav-links { display: flex; align-items: center; gap: 4px; }
-.nav-btn { background: none; border: none; font-family: var(--sans); font-size: 13px; color: var(--text-secondary); padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: color var(--tr), background var(--tr); }
-.nav-btn:hover { color: var(--text-primary); background: var(--warm-surface); }
-.nav-btn.active { color: var(--text-primary); }
-.nav-cta { background: var(--text-primary); color: var(--warm-bg); border: none; font-family: var(--sans); font-size: 13px; padding: 7px 16px; border-radius: 20px; cursor: pointer; margin-left: 8px; transition: opacity var(--tr); }
-.nav-cta:hover { opacity: 0.8; }
+nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:.5px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);transition:background .4s}
+.logo{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:400;color:var(--text1);display:flex;align-items:center;gap:7px;text-decoration:none}
+.logo-flame{width:16px;height:20px}
+.nav-right{display:flex;align-items:center;gap:2px}
+.nav-btn{background:none;border:none;font-family:inherit;font-size:13px;color:var(--text2);padding:6px 10px;border-radius:8px;cursor:pointer;transition:color .2s,background .2s}
+.nav-btn:hover,.nav-btn.active{color:var(--text1);background:var(--surface)}
+.theme-toggle{width:34px;height:34px;border-radius:50%;background:var(--surface);border:.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-left:4px;transition:background .2s;flex-shrink:0}
+.theme-toggle:hover{background:var(--surface2)}
+.nav-cta{background:var(--text1);color:var(--bg);border:none;font-family:inherit;font-size:13px;padding:7px 14px;border-radius:18px;cursor:pointer;margin-left:6px;transition:opacity .2s}
+.nav-cta:hover{opacity:.8}
 
 /* PAGES */
-.page { display: none; }
-.page.active { display: block; animation: fadeUp 0.5s ease both; }
+.page{display:none}
+.page.active{display:block;animation:fadeUp .45s ease both}
 
 /* HERO */
-.hero { padding: 72px 28px 56px; max-width: 680px; }
-.hero-eyebrow { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ember); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-.hero-eyebrow::after { content:''; display:inline-block; width:24px; height:0.5px; background:var(--ember-light); }
-.hero-title { font-family: var(--serif); font-size: 36px; font-weight: 300; line-height: 1.35; margin-bottom: 20px; letter-spacing: -0.01em; }
-.hero-sub { font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 36px; max-width: 480px; }
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-.btn-primary { background: var(--text-primary); color: var(--warm-bg); border: none; font-family: var(--sans); font-size: 14px; padding: 12px 24px; border-radius: 24px; cursor: pointer; transition: opacity var(--tr), transform var(--tr); }
-.btn-primary:hover { opacity: 0.82; transform: translateY(-1px); }
-.btn-outline { background: none; border: 0.5px solid var(--warm-border-mid); font-family: var(--sans); font-size: 14px; color: var(--text-secondary); padding: 12px 24px; border-radius: 24px; cursor: pointer; transition: border-color var(--tr), color var(--tr), transform var(--tr); }
-.btn-outline:hover { border-color: var(--ember-light); color: var(--text-primary); transform: translateY(-1px); }
+.hero{padding:56px 20px 44px;max-width:640px}
+.eyebrow{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.eyebrow::after{content:'';display:inline-block;width:20px;height:.5px;background:var(--ember-light)}
+.hero-title{font-family:'Noto Serif SC',serif;font-size:30px;font-weight:300;line-height:1.38;margin-bottom:18px;letter-spacing:-.01em}
+.hero-sub{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:32px;max-width:440px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-p{background:var(--text1);color:var(--bg);border:none;font-family:inherit;font-size:14px;padding:12px 22px;border-radius:22px;cursor:pointer;transition:opacity .2s,transform .2s}
+.btn-p:hover{opacity:.82;transform:translateY(-1px)}
+.btn-o{background:none;border:.5px solid var(--border-mid);font-family:inherit;font-size:14px;color:var(--text2);padding:12px 22px;border-radius:22px;cursor:pointer;transition:border-color .2s,color .2s,transform .2s}
+.btn-o:hover{border-color:var(--ember-light);color:var(--text1);transform:translateY(-1px)}
 
 /* HEAL BANNER */
-.heal-banner { margin: 0 28px 40px; background: var(--warm-surface); border: 0.5px solid var(--warm-border); border-radius: var(--radius); padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.heal-left { display: flex; align-items: flex-start; gap: 14px; }
-.heal-icon { width: 36px; height: 36px; background: rgba(192,122,58,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.heal-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-.heal-text strong { color: var(--text-primary); font-weight: 500; display: block; margin-bottom: 2px; }
-.heal-cta { background: none; border: 0.5px solid var(--warm-border-mid); border-radius: 20px; padding: 8px 18px; font-size: 13px; color: var(--text-secondary); cursor: pointer; white-space: nowrap; font-family: var(--sans); transition: all var(--tr); flex-shrink: 0; }
-.heal-cta:hover { background: var(--warm-bg); border-color: var(--ember-light); color: var(--ember); }
+.heal-banner{margin:0 20px 36px;background:var(--surface);border:.5px solid var(--border);border-radius:12px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;transition:background .4s}
+.heal-left{display:flex;align-items:flex-start;gap:12px}
+.heal-icon{width:34px;height:34px;background:var(--tag-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.heal-text{font-size:13px;color:var(--text2);line-height:1.6}
+.heal-text strong{color:var(--text1);font-weight:500;display:block;margin-bottom:2px}
+.heal-cta{background:none;border:.5px solid var(--border-mid);border-radius:18px;padding:7px 16px;font-size:12px;color:var(--text2);cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .2s;flex-shrink:0}
+.heal-cta:hover{border-color:var(--ember-light);color:var(--ember);background:var(--bg)}
 
 /* DIVIDER */
-.divider { height: 0.5px; background: var(--warm-border); margin: 0 28px; }
+.divider{height:.5px;background:var(--border);margin:0 20px}
 
 /* FEED */
-.feed { padding: 28px; }
-.feed-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; flex-wrap: wrap; }
-.feed-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); }
-.filters { display: flex; gap: 6px; flex-wrap: wrap; }
-.filter-btn { background: none; border: 0.5px solid var(--warm-border); border-radius: 16px; padding: 5px 14px; font-size: 12px; font-family: var(--sans); color: var(--text-secondary); cursor: pointer; transition: all var(--tr); }
-.filter-btn:hover { border-color: var(--warm-border-mid); color: var(--text-primary); }
-.filter-btn.active { background: var(--text-primary); border-color: var(--text-primary); color: var(--warm-bg); }
-.stories { display: flex; flex-direction: column; }
-.story { padding: 22px 0; border-bottom: 0.5px solid var(--warm-border); }
-.story:last-child { border-bottom: none; }
-.story-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-.story-tag { font-size: 11px; color: var(--tag-text); background: var(--tag-bg); padding: 3px 10px; border-radius: 10px; }
-.story-dot { width: 2px; height: 2px; border-radius: 50%; background: var(--warm-border-mid); }
-.story-loc { font-size: 11px; color: var(--text-tertiary); }
-.story-body { font-family: var(--serif); font-size: 15px; font-weight: 300; line-height: 1.85; margin-bottom: 14px; }
-.story-footer { display: flex; align-items: center; gap: 16px; }
-.story-action { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-tertiary); background: none; border: none; font-family: var(--sans); cursor: pointer; padding: 0; transition: color var(--tr); }
-.story-action svg { width: 14px; height: 14px; flex-shrink: 0; }
-.story-action:hover, .story-action.liked { color: var(--ember); }
-.story-resonance { font-size: 11px; color: var(--text-tertiary); margin-left: auto; }
+.feed{padding:24px 20px 120px}
+.feed-header{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.feed-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{background:none;border:.5px solid var(--border);border-radius:14px;padding:5px 13px;font-size:12px;font-family:inherit;color:var(--text2);cursor:pointer;transition:all .2s}
+.filter-btn:hover{border-color:var(--border-mid);color:var(--text1)}
+.filter-btn.active{background:var(--text1);border-color:var(--text1);color:var(--bg)}
+.stories{display:flex;flex-direction:column}
+.story{padding:20px 0;border-bottom:.5px solid var(--border)}
+.story:last-child{border-bottom:none}
+.story-meta{display:flex;align-items:center;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+.story-tag{font-size:11px;color:var(--tag-text);background:var(--tag-bg);padding:2px 9px;border-radius:9px}
+.story-dot{width:2px;height:2px;border-radius:50%;background:var(--border-mid)}
+.story-loc{font-size:11px;color:var(--text3)}
+.story-body{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:300;line-height:1.85;margin-bottom:12px}
+.story-footer{display:flex;align-items:center;gap:14px}
+.story-action{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);background:none;border:none;font-family:inherit;cursor:pointer;padding:0;transition:color .2s}
+.story-action svg{width:14px;height:14px;flex-shrink:0}
+.story-action:hover,.story-action.liked{color:var(--ember)}
+.story-resonance{font-size:11px;color:var(--text3);margin-left:auto}
+.feed-empty{padding:40px 0;text-align:center;color:var(--text3);font-size:14px;line-height:1.8}
+.feed-loading{padding:32px 0;text-align:center;color:var(--text3);font-size:13px}
 
 /* COMPOSE BAR */
-.compose-bar { position: sticky; bottom: 0; background: rgba(250,248,244,0.95); border-top: 0.5px solid var(--warm-border); padding: 14px 28px; display: flex; align-items: flex-end; gap: 10px; backdrop-filter: blur(8px); }
-.compose-wrap { flex: 1; }
-.compose-input { width: 100%; min-height: 44px; max-height: 160px; background: var(--warm-surface); border: 0.5px solid var(--warm-border); border-radius: var(--radius); padding: 12px 16px; font-size: 14px; font-family: var(--serif); font-weight: 300; color: var(--text-primary); resize: none; outline: none; line-height: 1.6; transition: border-color var(--tr); }
-.compose-input::placeholder { color: var(--text-tertiary); }
-.compose-input:focus { border-color: var(--warm-border-mid); }
-.compose-hint { font-size: 11px; color: var(--text-tertiary); margin-top: 5px; padding-left: 2px; }
-.compose-send { background: var(--text-primary); color: var(--warm-bg); border: none; border-radius: 22px; padding: 11px 20px; font-size: 13px; font-family: var(--sans); cursor: pointer; white-space: nowrap; transition: opacity var(--tr), transform var(--tr); flex-shrink: 0; margin-bottom: 22px; }
-.compose-send:hover { opacity: 0.82; transform: translateY(-1px); }
-.compose-send:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+.compose-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:.5px solid var(--border);padding:12px 20px 20px;display:flex;align-items:flex-end;gap:10px;backdrop-filter:blur(12px);transition:background .4s;z-index:50}
+.compose-wrap{flex:1}
+.compose-input{width:100%;min-height:42px;max-height:140px;background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'Noto Serif SC',serif;font-weight:300;color:var(--text1);resize:none;outline:none;line-height:1.6;transition:border-color .2s,background .4s}
+.compose-input::placeholder{color:var(--text3)}
+.compose-input:focus{border-color:var(--border-mid)}
+.compose-hint{font-size:11px;color:var(--text3);margin-top:4px;padding-left:2px}
+.compose-send{background:var(--text1);color:var(--bg);border:none;border-radius:20px;padding:10px 18px;font-size:13px;font-family:inherit;cursor:pointer;white-space:nowrap;transition:opacity .2s;flex-shrink:0;margin-bottom:20px}
+.compose-send:hover{opacity:.82}
+.compose-send:disabled{opacity:.3;cursor:not-allowed}
 
-/* ═══ HEAL PAGE ═══ */
-.heal-page { padding: 48px 28px 120px; max-width: 760px; }
-.heal-page-title { font-family: var(--serif); font-size: 28px; font-weight: 300; margin-bottom: 8px; }
-.heal-page-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 40px; max-width: 520px; }
-.method-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
-.method-card {
-  background: var(--warm-bg);
-  border: 0.5px solid var(--warm-border);
-  border-radius: var(--radius);
-  padding: 22px 20px;
-  cursor: pointer;
-  transition: border-color var(--tr), transform var(--tr);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.method-card:hover { border-color: var(--ember-light); transform: translateY(-2px); }
-.method-card-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-.method-card-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
-.method-card-en { font-size: 11px; color: var(--text-tertiary); }
-.method-card-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
-.method-card-meta { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
-.method-pill { font-size: 11px; color: var(--tag-text); background: var(--tag-bg); padding: 2px 9px; border-radius: 8px; }
+/* HEAL PAGE */
+.heal-page{padding:40px 20px 120px}
+.heal-page-title{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:300;margin-bottom:6px}
+.heal-page-sub{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:32px;max-width:480px}
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(min-width:600px){.method-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:900px){.method-grid{grid-template-columns:repeat(4,1fr)}}
+.method-card{background:var(--bg);border:.5px solid var(--border);border-radius:12px;padding:18px 16px;cursor:pointer;transition:border-color .2s,transform .2s,background .4s;display:flex;flex-direction:column;gap:9px}
+.method-card:hover{border-color:var(--ember-light);transform:translateY(-2px)}
+.method-card-icon{width:32px;height:32px;border-radius:50%;background:var(--tag-bg);display:flex;align-items:center;justify-content:center}
+.method-card-name{font-size:13px;font-weight:500;color:var(--text1);line-height:1.3}
+.method-card-en{font-size:10px;color:var(--text3)}
+.method-card-desc{font-size:12px;color:var(--text2);line-height:1.6}
+.method-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
+.method-pill{font-size:10px;color:var(--tag-text);background:var(--tag-bg);padding:2px 8px;border-radius:7px}
 
-/* ═══ PRACTICE MODAL ═══ */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,33,24,0.5); z-index: 200; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
-.modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
-.modal { background: var(--warm-bg); border-radius: var(--radius); padding: 0; max-width: 520px; width: 100%; border: 0.5px solid var(--warm-border); animation: slideUp 0.28s ease; overflow: hidden; max-height: 90vh; display: flex; flex-direction: column; }
-.modal-header { padding: 28px 28px 0; flex-shrink: 0; }
-.modal-body { padding: 0 28px 28px; overflow-y: auto; flex: 1; }
-.modal-title { font-family: var(--serif); font-size: 20px; font-weight: 400; margin-bottom: 4px; }
-.modal-title-en { font-size: 12px; color: var(--text-tertiary); margin-bottom: 16px; }
-.modal-sub { font-size: 13px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 24px; }
-.modal-footer { padding: 16px 28px; border-top: 0.5px solid var(--warm-border); display: flex; justify-content: flex-end; gap: 10px; flex-shrink: 0; background: var(--warm-bg); }
-.modal-cancel { background: none; border: 0.5px solid var(--warm-border-mid); border-radius: 20px; padding: 9px 20px; font-size: 13px; font-family: var(--sans); color: var(--text-secondary); cursor: pointer; }
-.modal-cancel:hover { color: var(--text-primary); }
-.modal-submit { background: var(--text-primary); color: var(--warm-bg); border: none; border-radius: 20px; padding: 9px 20px; font-size: 13px; font-family: var(--sans); cursor: pointer; transition: opacity var(--tr); }
-.modal-submit:hover { opacity: 0.8; }
+/* QUIZ */
+.quiz-wrap{background:var(--surface);border-radius:14px;padding:22px 20px;margin-bottom:28px;transition:background .4s}
+.quiz-title{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:400;margin-bottom:6px}
+.quiz-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:18px}
+.quiz-options{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{background:var(--bg);border:.5px solid var(--border);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--text1);cursor:pointer;text-align:left;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:10px}
+.quiz-opt:hover{border-color:var(--ember-light);background:var(--surface2)}
+.quiz-opt.selected{border-color:var(--ember);background:var(--tag-bg);color:var(--ember)}
+.quiz-opt-icon{font-size:18px;flex-shrink:0}
+.quiz-opt-text{display:flex;flex-direction:column;gap:1px}
+.quiz-opt-main{font-size:13px}
+.quiz-opt-hint{font-size:11px;color:var(--text3)}
+.quiz-opt.selected .quiz-opt-hint{color:var(--ember);opacity:.7}
+.quiz-result{margin-top:18px;padding-top:18px;border-top:.5px solid var(--border)}
+.quiz-result-label{font-size:11px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.quiz-recs{display:flex;flex-direction:column;gap:8px}
+.quiz-rec{background:var(--bg);border:.5px solid var(--border-mid);border-radius:10px;padding:12px 16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.quiz-rec:hover{border-color:var(--ember-light);transform:translateX(2px)}
+.quiz-rec-name{font-size:13px;font-weight:500;color:var(--text1);margin-bottom:2px}
+.quiz-rec-why{font-size:12px;color:var(--text2);line-height:1.5}
+.quiz-rec-arrow{color:var(--text3);font-size:16px;flex-shrink:0}
 
-/* PRACTICE STEPPER */
-.practice-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.practice-progress { display: flex; gap: 4px; }
-.progress-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--warm-border-mid); transition: background 0.3s; }
-.progress-dot.done { background: var(--ember-light); }
-.progress-dot.active { background: var(--ember); }
-.practice-step-label { font-size: 11px; color: var(--text-tertiary); }
+/* PRACTICE MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:var(--overlay);z-index:200;align-items:flex-end;justify-content:center;padding:0}
+@media(min-width:600px){.modal-overlay{align-items:center;padding:20px}}
+.modal-overlay.open{display:flex;animation:fadeIn .2s ease}
+.modal{background:var(--bg);border-radius:18px 18px 0 0;padding:0;width:100%;max-width:540px;border:.5px solid var(--border);animation:slideUp .3s cubic-bezier(.34,1.3,.64,1);overflow:hidden;max-height:92vh;display:flex;flex-direction:column;transition:background .4s}
+@media(min-width:600px){.modal{border-radius:18px;max-height:88vh}}
+.modal-drag{width:36px;height:4px;background:var(--border-mid);border-radius:2px;margin:12px auto 0}
+.modal-header{padding:16px 22px 0;flex-shrink:0}
+.modal-body{padding:0 22px 24px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+.modal-title{font-family:'Noto Serif SC',serif;font-size:19px;font-weight:400;margin-bottom:3px}
+.modal-title-en{font-size:11px;color:var(--text3);margin-bottom:12px}
+.modal-sub{font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:20px}
+.modal-footer{padding:14px 22px 24px;border-top:.5px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;background:var(--bg);transition:background .4s}
+.modal-cancel{background:none;border:.5px solid var(--border-mid);border-radius:18px;padding:9px 18px;font-size:13px;font-family:inherit;color:var(--text2);cursor:pointer}
+.modal-submit{background:var(--text1);color:var(--bg);border:none;border-radius:18px;padding:9px 18px;font-size:13px;font-family:inherit;cursor:pointer;transition:opacity .2s}
+.modal-submit:hover{opacity:.8}
 
-.step-content { animation: fadeUp 0.35s ease both; }
-.step-num-badge { font-family: var(--serif); font-size: 32px; font-weight: 300; color: var(--ember-light); line-height: 1; margin-bottom: 12px; }
-.step-instruction { font-family: var(--serif); font-size: 17px; font-weight: 300; line-height: 1.7; color: var(--text-primary); margin-bottom: 16px; }
-.step-detail { font-size: 13px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 20px; }
+/* PRACTICE */
+.practice-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.progress-dots{display:flex;gap:5px}
+.progress-dot{width:7px;height:7px;border-radius:50%;background:var(--border-mid);transition:background .3s,transform .3s}
+.progress-dot.done{background:var(--ember-light)}
+.progress-dot.active{background:var(--ember);transform:scale(1.25)}
+.step-label{font-size:11px;color:var(--text3)}
+.step-content{animation:fadeUp .32s ease both}
+.step-num-badge{font-family:'Noto Serif SC',serif;font-size:28px;font-weight:300;color:var(--ember-light);line-height:1;margin-bottom:10px}
+.step-instruction{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:300;line-height:1.75;color:var(--text1);margin-bottom:12px}
+.step-detail{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:18px}
+
+/* BREATH */
+.breath-block{background:var(--breath-bg);border-radius:16px;padding:24px 20px 20px;margin-bottom:18px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.breath-svg-wrap{position:relative;width:200px;height:200px;display:flex;align-items:center;justify-content:center}
+.breath-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.breath-blob-path{fill:var(--breath-fill);stroke:var(--breath-stroke);stroke-width:1.5}
+.breath-center-text{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none}
+.breath-phase-word{font-size:15px;color:var(--ember);font-weight:500;letter-spacing:.04em}
+.breath-count{font-family:'Noto Serif SC',serif;font-size:32px;font-weight:300;color:var(--text1);line-height:1}
+.breath-pattern-label{font-size:12px;color:var(--text2);text-align:center}
+.breath-rhythm{font-size:11px;color:var(--text3);text-align:center}
 
 /* TIMER */
-.timer-block { background: var(--warm-surface); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.timer-ring-wrap { position: relative; width: 80px; height: 80px; }
-.timer-ring-wrap svg { transform: rotate(-90deg); }
-.timer-ring-bg { fill: none; stroke: var(--warm-border-mid); stroke-width: 3; }
-.timer-ring-fill { fill: none; stroke: var(--ember-light); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
-.timer-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 20px; color: var(--text-primary); }
-.timer-label { font-size: 12px; color: var(--text-tertiary); text-align: center; }
-.timer-controls { display: flex; gap: 8px; }
-.timer-btn { background: none; border: 0.5px solid var(--warm-border-mid); border-radius: 16px; padding: 6px 16px; font-size: 12px; font-family: var(--sans); color: var(--text-secondary); cursor: pointer; transition: all var(--tr); }
-.timer-btn:hover { border-color: var(--ember-light); color: var(--ember); }
-.timer-btn.primary { background: var(--text-primary); color: var(--warm-bg); border-color: var(--text-primary); }
-.timer-btn.primary:hover { opacity: 0.8; }
-
-/* BREATH GUIDE */
-.breath-block { background: var(--warm-surface); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
-.breath-circle-wrap { position: relative; display: flex; align-items: center; justify-content: center; }
-.breath-circle { width: 72px; height: 72px; border-radius: 50%; background: rgba(192,122,58,0.12); border: 0.5px solid var(--ember-light); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--ember); transition: transform 0.8s ease, background 0.8s ease; }
-.breath-circle.expand { transform: scale(1.35); background: rgba(192,122,58,0.22); }
-.breath-circle.hold { transform: scale(1.35); background: rgba(192,122,58,0.18); }
-.breath-circle.contract { transform: scale(1); background: rgba(192,122,58,0.08); }
-.breath-phase { font-size: 13px; color: var(--text-secondary); text-align: center; }
-.breath-pattern { font-size: 11px; color: var(--text-tertiary); text-align: center; }
+.timer-block{background:var(--surface);border-radius:14px;padding:18px 20px;margin-bottom:18px;display:flex;flex-direction:column;align-items:center;gap:12px;transition:background .4s}
+.timer-ring-wrap{position:relative;width:88px;height:88px}
+.timer-ring-wrap svg{transform:rotate(-90deg)}
+.timer-ring-bg{fill:none;stroke:var(--border-mid);stroke-width:3}
+.timer-ring-fill{fill:none;stroke:var(--ember-light);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.timer-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Noto Serif SC',serif;font-size:22px;color:var(--text1)}
+.timer-lbl{font-size:12px;color:var(--text3);text-align:center}
+.timer-controls{display:flex;gap:8px}
+.timer-btn{background:none;border:.5px solid var(--border-mid);border-radius:16px;padding:7px 16px;font-size:12px;font-family:inherit;color:var(--text2);cursor:pointer;transition:all .2s}
+.timer-btn:hover{border-color:var(--ember-light);color:var(--ember)}
+.timer-btn.tp{background:var(--text1);color:var(--bg);border-color:var(--text1)}
+.timer-btn.tp:hover{opacity:.8}
 
 /* STEP NAV */
-.step-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
-.step-nav-btn { background: none; border: 0.5px solid var(--warm-border-mid); border-radius: 20px; padding: 9px 20px; font-size: 13px; font-family: var(--sans); color: var(--text-secondary); cursor: pointer; transition: all var(--tr); }
-.step-nav-btn:hover { border-color: var(--ember-light); color: var(--text-primary); }
-.step-nav-btn.next-btn { background: var(--text-primary); color: var(--warm-bg); border-color: var(--text-primary); }
-.step-nav-btn.next-btn:hover { opacity: 0.82; }
-.step-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.step-nav{display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:14px;border-top:.5px solid var(--border)}
+.snb{background:none;border:.5px solid var(--border-mid);border-radius:18px;padding:9px 18px;font-size:13px;font-family:inherit;color:var(--text2);cursor:pointer;transition:all .2s}
+.snb:hover{border-color:var(--ember-light);color:var(--text1)}
+.snb.next{background:var(--text1);color:var(--bg);border-color:var(--text1)}
+.snb.next:hover{opacity:.82}
+.snb:disabled{opacity:.3;cursor:not-allowed}
 
-/* COMPLETE STATE */
-.complete-block { text-align: center; padding: 24px 0 8px; }
-.complete-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--tag-bg); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-.complete-title { font-family: var(--serif); font-size: 20px; font-weight: 300; margin-bottom: 8px; }
-.complete-sub { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+/* COMPLETE */
+.complete-block{text-align:center;padding:20px 0}
+.complete-icon{width:56px;height:56px;border-radius:50%;background:var(--tag-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.complete-title{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:300;margin-bottom:8px}
+.complete-sub{font-size:13px;color:var(--text2);line-height:1.75}
 
 /* COMPOSE MODAL */
-.compose-modal-wrap { padding: 28px; }
-.modal-section { margin-bottom: 20px; }
-.modal-label { font-size: 12px; color: var(--text-tertiary); margin-bottom: 8px; display: block; letter-spacing: 0.04em; }
-.modal-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.modal-tag { background: none; border: 0.5px solid var(--warm-border-mid); border-radius: 14px; padding: 5px 14px; font-size: 12px; font-family: var(--sans); color: var(--text-secondary); cursor: pointer; transition: all var(--tr); }
-.modal-tag:hover, .modal-tag.selected { background: var(--tag-bg); border-color: var(--ember-light); color: var(--ember); }
-.modal-textarea { width: 100%; min-height: 120px; background: var(--warm-surface); border: 0.5px solid var(--warm-border); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; font-family: var(--serif); font-weight: 300; color: var(--text-primary); resize: none; outline: none; line-height: 1.7; transition: border-color var(--tr); }
-.modal-textarea::placeholder { color: var(--text-tertiary); }
-.modal-textarea:focus { border-color: var(--warm-border-mid); }
+.cmodal-wrap{padding:20px 22px 22px}
+.cmodal-title{font-family:'Noto Serif SC',serif;font-size:18px;font-weight:400;margin-bottom:4px}
+.cmodal-sub{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px}
+.cmodal-section{margin-bottom:16px}
+.cmodal-label{font-size:11px;color:var(--text3);margin-bottom:8px;display:block;letter-spacing:.04em}
+.ctags{display:flex;gap:6px;flex-wrap:wrap}
+.ctag{background:none;border:.5px solid var(--border-mid);border-radius:13px;padding:5px 13px;font-size:12px;font-family:inherit;color:var(--text2);cursor:pointer;transition:all .2s}
+.ctag:hover,.ctag.sel{background:var(--tag-bg);border-color:var(--ember-light);color:var(--ember)}
+.ctextarea{width:100%;min-height:110px;background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;font-family:'Noto Serif SC',serif;font-weight:300;color:var(--text1);resize:none;outline:none;line-height:1.7;transition:border-color .2s,background .4s}
+.ctextarea::placeholder{color:var(--text3)}
+.ctextarea:focus{border-color:var(--border-mid)}
+.cmodal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+
+/* ═══ ADMIN ═══ */
+.admin-page{padding:32px 20px 80px;max-width:720px;margin:0 auto}
+.admin-login{max-width:340px;margin:80px auto 0;padding:32px 24px;background:var(--surface);border-radius:14px;border:.5px solid var(--border)}
+.admin-login h2{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:400;margin-bottom:6px}
+.admin-login p{font-size:13px;color:var(--text2);margin-bottom:20px}
+.admin-input{width:100%;background:var(--bg);border:.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:14px;font-family:inherit;color:var(--text1);outline:none;transition:border-color .2s;margin-bottom:12px}
+.admin-input:focus{border-color:var(--border-mid)}
+.admin-input::placeholder{color:var(--text3)}
+.admin-section-title{font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;margin-top:28px}
+.admin-card{background:var(--surface);border-radius:12px;padding:18px 20px;margin-bottom:12px;border:.5px solid var(--border);transition:background .4s}
+.admin-body{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:300;line-height:1.8;margin-bottom:12px;color:var(--text1)}
+.admin-meta{font-size:12px;color:var(--text3);margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap}
+.admin-meta span{background:var(--tag-bg);color:var(--tag-text);padding:2px 8px;border-radius:7px}
+.admin-actions{display:flex;gap:8px}
+.admin-btn{padding:8px 18px;border-radius:16px;font-size:12px;font-family:inherit;cursor:pointer;border:none;transition:all .2s}
+.admin-approve{background:#2d6a4f;color:#fff}
+.admin-approve:hover{opacity:.85}
+.admin-reject{background:var(--surface2);color:var(--text2);border:.5px solid var(--border-mid)}
+.admin-reject:hover{background:var(--border-mid)}
+.admin-empty{padding:40px 0;text-align:center;color:var(--text3);font-size:14px}
+.admin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.admin-stat{background:var(--surface);border-radius:10px;padding:16px;text-align:center;border:.5px solid var(--border)}
+.admin-stat-num{font-family:'Noto Serif SC',serif;font-size:28px;font-weight:300;color:var(--ember);line-height:1}
+.admin-stat-label{font-size:11px;color:var(--text3);margin-top:4px}
 
 /* TOAST */
-.toast { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text-primary); color: var(--warm-bg); padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: all 0.3s ease; pointer-events: none; white-space: nowrap; z-index: 400; }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--text1);color:var(--bg);padding:9px 18px;border-radius:18px;font-size:13px;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:500}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ANIMATIONS */
-@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-@keyframes slideUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
-@keyframes storyIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-
-@media (max-width: 600px) {
-  .hero { padding: 48px 20px 40px; }
-  .hero-title { font-size: 27px; }
-  nav { padding: 0 16px; }
-  .heal-banner { margin: 0 20px 32px; flex-direction: column; align-items: flex-start; }
-  .divider { margin: 0 20px; }
-  .feed { padding: 20px; }
-  .compose-bar { padding: 12px 20px; }
-  .heal-page { padding: 32px 20px 120px; }
-  .method-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .modal { margin: 0 4px; }
-}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes storyIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="#" class="logo" onclick="showPage('home'); return false;">
+  <a href="#" class="logo" onclick="showPage('home');return false;">
     <svg class="logo-flame" viewBox="0 0 18 22" fill="none">
       <path d="M9 2C9 2 5 6 5 10C5 10 3 9 3 7C3 7 1 10 1 13C1 17.4 4.6 21 9 21C13.4 21 17 17.4 17 13C17 8 12 4 9 2Z" fill="#c07a3a" opacity="0.85"/>
       <path d="M9 10C9 10 7 12 7 14C7 14 8 13.5 8.5 13C8.5 13 8 15 9 16C10 15 9.5 13 9.5 13C10 13.5 11 14 11 14C11 12 9 10 9 10Z" fill="#e8a96a" opacity="0.9"/>
     </svg>
     内在小孩
   </a>
-  <div class="nav-links">
+  <div class="nav-right">
     <button class="nav-btn" id="navHome" onclick="showPage('home')">倾诉</button>
     <button class="nav-btn" id="navHeal" onclick="showPage('heal')">治愈</button>
-    <button class="nav-cta" onclick="openComposeModal()">匿名倾诉</button>
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <svg id="themeIcon" width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4">
+        <circle cx="7.5" cy="7.5" r="3"/>
+        <path d="M7.5 1v1.5M7.5 12.5V14M1 7.5h1.5M12.5 7.5H14M3.1 3.1l1.06 1.06M10.84 10.84l1.06 1.06M3.1 11.9l1.06-1.06M10.84 4.16l1.06-1.06"/>
+      </svg>
+    </div>
+    <button class="nav-cta" onclick="openComposeModal()">倾诉</button>
   </div>
 </nav>
 
-<!-- HOME PAGE -->
+<!-- HOME -->
 <div class="page active" id="pageHome">
   <div class="hero">
-    <div class="hero-eyebrow">完全匿名 &nbsp;·&nbsp; 来自世界各地</div>
-    <h1 class="hero-title">你不是一个人。<br>这里收集<br>所有被藏起来的悲伤。</h1>
+    <div class="eyebrow">完全匿名 &nbsp;·&nbsp; 来自世界各地</div>
+    <h1 class="hero-title">你不是一个人。<br>这里收集所有<br>被藏起来的悲伤。</h1>
     <p class="hero-sub">每一段伤痛都值得被看见。在这里说出来，找到和你相似的人，慢慢愈合那个内在小孩。</p>
     <div class="hero-actions">
-      <button class="btn-primary" onclick="openComposeModal()">匿名倾诉</button>
-      <button class="btn-outline" onclick="showPage('heal')">探索治愈方法</button>
+      <button class="btn-p" onclick="openComposeModal()">匿名倾诉</button>
+      <button class="btn-o" onclick="showPage('heal')">探索治愈方法</button>
     </div>
   </div>
-
   <div class="heal-banner">
     <div class="heal-left">
       <div class="heal-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#c07a3a" stroke-width="1.5"><path d="M8 1l1.5 3 3.5.5-2.5 2.5.6 3.5L8 9l-3.1 1.5.6-3.5L3 4.5l3.5-.5z"/></svg>
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="var(--ember)" stroke-width="1.5">
+          <path d="M7.5 1l1.4 2.9L12 4.4 9.75 6.6l.55 3.25L7.5 8.4l-2.8 1.45.55-3.25L3 4.4l3.1-.5z"/>
+        </svg>
       </div>
       <div class="heal-text">
         <strong>本周推荐：生理叹息法</strong>
-        斯坦福神经科学家证实——45 秒内平复焦虑最有效的呼吸法。完全不需要任何基础。
+        斯坦福神经科学研究：45 秒平复焦虑，现在就可以开始。
       </div>
     </div>
-    <button class="heal-cta" onclick="openPractice('sigh')">试一试 →</button>
+    <button class="heal-cta" onclick="openPractice('sigh')">试试 →</button>
   </div>
-
   <div class="divider"></div>
-
   <div class="feed" id="feed">
     <div class="feed-header">
       <div class="feed-label">最新的声音</div>
@@ -282,45 +321,82 @@ nav { position: sticky; top: 0; z-index: 100; background: rgba(250,248,244,0.92)
         <button class="filter-btn" data-tag="自我">自我</button>
       </div>
     </div>
-    <div class="stories" id="storiesList"></div>
+    <div class="stories" id="storiesList">
+      <div class="feed-loading">加载中…</div>
+    </div>
   </div>
-
   <div class="compose-bar">
     <div class="compose-wrap">
-      <textarea class="compose-input" id="quickCompose" placeholder="今天有什么想说的？完全匿名，不需要登录。" rows="1"></textarea>
-      <div class="compose-hint">按 Enter 发送 · 完全匿名 · 不留任何个人信息</div>
+      <textarea class="compose-input" id="quickCompose" placeholder="今天有什么想说的？完全匿名。" rows="1"></textarea>
+      <div class="compose-hint">Enter 发送 · 完全匿名 · 不留个人信息</div>
     </div>
     <button class="compose-send" id="composeSendBtn" disabled onclick="quickSend()">发出去</button>
   </div>
 </div>
 
-<!-- HEAL PAGE -->
+<!-- HEAL -->
 <div class="page" id="pageHeal">
   <div class="heal-page">
     <h1 class="heal-page-title">找到适合你的方式</h1>
-    <p class="heal-page-sub">每一种方法都有科学依据，也都很温和。你不需要全部尝试——找到一两种让你感觉对的，慢慢练习就好。</p>
+    <p class="heal-page-sub">先告诉我你今天想要什么——我来帮你推荐。</p>
+    <div class="quiz-wrap">
+      <div class="quiz-title">你今天最想要的是什么？</div>
+      <div class="quiz-sub">根据你的感受，我会推荐最适合的练习。</div>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="quiz-result" id="quizResult" style="display:none">
+        <div class="quiz-result-label">为你推荐</div>
+        <div class="quiz-recs" id="quizRecs"></div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px">所有方法</div>
     <div class="method-grid" id="methodGrid"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="page" id="pageAdmin">
+  <div class="admin-page">
+    <div id="adminLogin">
+      <div class="admin-login">
+        <h2>管理后台</h2>
+        <p>输入管理员密码进入审核界面</p>
+        <input class="admin-input" type="password" id="adminPwd" placeholder="密码" onkeydown="if(event.key==='Enter')adminAuth()"/>
+        <button class="btn-p" style="width:100%" onclick="adminAuth()">进入</button>
+      </div>
+    </div>
+    <div id="adminPanel" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <h2 style="font-family:'Noto Serif SC',serif;font-size:20px;font-weight:400">管理后台</h2>
+        <button class="snb" onclick="adminLogout()">退出</button>
+      </div>
+      <div class="admin-stats" id="adminStats"></div>
+      <div class="admin-section-title">待审核</div>
+      <div id="pendingList"></div>
+      <div class="admin-section-title" style="margin-top:32px">已发布</div>
+      <div id="approvedList"></div>
+    </div>
   </div>
 </div>
 
 <!-- PRACTICE MODAL -->
 <div class="modal-overlay" id="practiceModal">
-  <div class="modal" id="practiceModalInner">
+  <div class="modal">
+    <div class="modal-drag"></div>
     <div class="modal-header">
       <h2 class="modal-title" id="pmTitle"></h2>
       <div class="modal-title-en" id="pmEn"></div>
       <p class="modal-sub" id="pmSub"></p>
       <div class="practice-header">
-        <div class="practice-progress" id="pmDots"></div>
-        <div class="practice-step-label" id="pmStepLabel"></div>
+        <div class="progress-dots" id="pmDots"></div>
+        <div class="step-label" id="pmStepLbl"></div>
       </div>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" id="pmBody">
       <div id="pmStepContent"></div>
     </div>
     <div class="modal-footer">
       <button class="modal-cancel" onclick="closePractice()">结束练习</button>
-      <button class="modal-submit" onclick="openComposeModal(); closePractice()">练习后，来倾诉</button>
+      <button class="modal-submit" onclick="closePractice();openComposeModal()">写下感受</button>
     </div>
   </div>
 </div>
@@ -328,27 +404,28 @@ nav { position: sticky; top: 0; z-index: 100; background: rgba(250,248,244,0.92)
 <!-- COMPOSE MODAL -->
 <div class="modal-overlay" id="composeModal">
   <div class="modal">
-    <div class="compose-modal-wrap">
-      <h2 class="modal-title">说出来</h2>
-      <p class="modal-sub">完全匿名，没有账号，没有追踪。你的文字会出现在这里，也许某个人看到后，会觉得不再孤单。</p>
-      <div class="modal-section">
-        <span class="modal-label">选一个标签</span>
-        <div class="modal-tags" id="modalTags">
-          <button class="modal-tag selected" data-tag="原生家庭">原生家庭</button>
-          <button class="modal-tag" data-tag="童年">童年</button>
-          <button class="modal-tag" data-tag="关系">关系</button>
-          <button class="modal-tag" data-tag="自我">自我</button>
-          <button class="modal-tag" data-tag="身体">身体</button>
-          <button class="modal-tag" data-tag="其他">其他</button>
+    <div class="modal-drag"></div>
+    <div class="cmodal-wrap">
+      <div class="cmodal-title">说出来</div>
+      <div class="cmodal-sub">完全匿名，没有账号，没有追踪。你的文字或许会让某个人感到不再孤单。</div>
+      <div class="cmodal-section">
+        <span class="cmodal-label">选一个标签</span>
+        <div class="ctags" id="cTags">
+          <button class="ctag sel" data-tag="原生家庭">原生家庭</button>
+          <button class="ctag" data-tag="童年">童年</button>
+          <button class="ctag" data-tag="关系">关系</button>
+          <button class="ctag" data-tag="自我">自我</button>
+          <button class="ctag" data-tag="身体">身体</button>
+          <button class="ctag" data-tag="其他">其他</button>
         </div>
       </div>
-      <div class="modal-section">
-        <span class="modal-label">你想说的</span>
-        <textarea class="modal-textarea" id="modalContent" placeholder="用你自己的语言，慢慢说……"></textarea>
+      <div class="cmodal-section">
+        <span class="cmodal-label">你想说的</span>
+        <textarea class="ctextarea" id="cContent" placeholder="用你自己的语言，慢慢说……"></textarea>
       </div>
-      <div style="display:flex;justify-content:flex-end;gap:10px">
+      <div class="cmodal-footer">
         <button class="modal-cancel" onclick="closeComposeModal()">取消</button>
-        <button class="modal-submit" onclick="submitStory()">发出去</button>
+        <button class="modal-submit" id="cSubmitBtn" onclick="submitStory()">发出去</button>
       </div>
     </div>
   </div>
@@ -357,678 +434,410 @@ nav { position: sticky; top: 0; z-index: 100; background: rgba(250,248,244,0.92)
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── DATA ───────────────────────────────────────────────
-const STORIES = [
-  { id:1, tag:'原生家庭', loc:'台北', time:'3 小时前', likes:214, body:'我妈从来没有直接说过「我爱你」。她以为给我买东西就是爱。我花了三十年才明白，我一直在等一句她说不出口的话。', liked:false },
-  { id:2, tag:'童年', loc:'上海', time:'昨天', likes:588, body:'小时候哭会被骂「没用」。所以我学会了不哭。现在我已经不知道怎么哭了，连悲伤都变成了麻木。', liked:false },
-  { id:3, tag:'关系', loc:'Toronto', time:'2 天前', likes:1042, body:"I grew up watching my parents yell. Now when someone raises their voice even a little, my whole body shuts down. I didn't know that was called a trauma response until last year.", liked:false },
-  { id:4, tag:'原生家庭', loc:'北京', time:'3 天前', likes:376, body:'我爸说「我们家没有这么多钱供你学这个」，那一刻我放弃了画画。二十年后我才知道，他其实是怕我比他更有出息。', liked:false },
-  { id:5, tag:'自我', loc:'Singapore', time:'4 天前', likes:819, body:'I spent years trying to be the "good one" in the family. Turns out I was just terrified of abandonment. Still working on figuring out what I actually like.', liked:false },
-  { id:6, tag:'童年', loc:'成都', time:'5 天前', likes:244, body:'我记得七岁的时候，因为没考满分被罚站了一晚上。那之后我开始相信，我只有表现完美，才值得被爱。', liked:false },
-  { id:7, tag:'身体', loc:'广州', time:'1 周前', likes:162, body:'有时候我会莫名地感到胸口紧，手心出汗，后来才知道那是焦虑，是身体记住了我忘掉的那些事。', liked:false },
+// ═══════════════════════════════════
+// SUPABASE CONFIG
+// ═══════════════════════════════════
+const SUPABASE_URL = 'https://ddvmjmsbqyzcxbaukxep.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_rVlofiqBsDVZ6UpcZqh0nw_v7NGyTcr';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ═══════════════════════════════════
+// ADMIN PASSWORD (改成你自己想要的)
+// ═══════════════════════════════════
+const ADMIN_PWD = 'innerchild2025';
+
+// ═══════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════
+const QUIZ=[
+  {icon:'😮‍💨',main:'平复此刻的焦虑',hint:'身体紧绷，心跳加速，停不下来',recs:['sigh','pmr'],why:{sigh:'最快平复神经系统，45秒见效',pmr:'通过身体放松打断焦虑循环'}},
+  {icon:'💧',main:'处理一段积压的情绪',hint:'有件事一直压在心里',recs:['sedona','naming'],why:{sedona:'温和地感受和放下积压情绪',naming:'说出感受名称就已经是释放'}},
+  {icon:'🌿',main:'疗愈童年或原生家庭的伤',hint:'小时候的事还在影响现在的我',recs:['innerchild','butterfly'],why:{innerchild:'直接与内在小孩相遇，IFS 核心方法',butterfly:'帮助大脑处理创伤记忆'}},
+  {icon:'🏠',main:'建立内心的安全感',hint:'感到不安全，容易被触发',recs:['safespace','butterfly'],why:{safespace:'建立专属于你的内心安全基地',butterfly:'创伤友好，温和有效'}},
+  {icon:'🌙',main:'帮助睡眠或放松身体',hint:'睡前思绪纷杂，身体无法放松',recs:['pmr','sigh'],why:{pmr:'从头到脚放松肌肉，失眠经典疗法',sigh:'快速平复神经，准备好入睡'}},
 ];
 
-// ─── METHODS ─────────────────────────────────────────────
-const METHODS = {
-  sigh: {
-    name: '生理叹息法',
-    en: 'Physiological Sigh',
-    desc: '斯坦福神经科学家 2023 年研究证实：双吸气 + 长呼气是最快平复焦虑神经系统的方法，45 秒见效。',
-    time: '3–5 分钟',
-    level: '入门',
-    icon: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#c07a3a" stroke-width="1.5"><path d="M9 3v5M6 6c0 0 1.5-1.5 3-1.5S12 6 12 6"/><path d="M4 10c0 2.8 2.2 5 5 5s5-2.2 5-5"/></svg>`,
-    color: 'rgba(192,122,58,0.1)',
-    steps: [
-      {
-        instruction: '找一个舒适的姿势，坐着或躺着都可以。',
-        detail: '放松肩膀，让脊背自然挺直。把手放在腹部，感受它随呼吸起伏。',
-        breath: null,
-        timerSec: 30,
-        timerLabel: '安定下来（30 秒）'
-      },
-      {
-        instruction: '先用鼻子吸气，吸到七分满……',
-        detail: '感受腹部向外扩展。不要强迫自己吸得很深，自然就好。',
-        breath: { pattern:'双吸气', inhale:2, hold:0, exhale:0, phase:'吸气中', label:'用鼻子缓慢吸气' },
-        timerSec: null,
-        timerLabel: null
-      },
-      {
-        instruction: '……然后再用鼻子补吸一口，把肺充满。',
-        detail: '这个「补吸」会重新打开肺泡，是这个方法的关键。你会感觉胸腔被完全撑开。',
-        breath: { pattern:'补吸一口', inhale:1, hold:0, exhale:0, phase:'补吸', label:'再补吸一口气' },
-        timerSec: null,
-        timerLabel: null
-      },
-      {
-        instruction: '现在，用嘴巴缓慢而彻底地呼出去……',
-        detail: '呼气时间是吸气的两倍长。让腹部慢慢内收，把所有空气轻轻推出去。这一步会激活副交感神经，真正让你平静下来。',
-        breath: { pattern:'长呼气', inhale:0, hold:0, exhale:6, phase:'呼气', label:'用嘴缓慢呼出' },
-        timerSec: null,
-        timerLabel: null
-      },
-      {
-        instruction: '重复 3–5 次，然后恢复自然呼吸。',
-        detail: '每一次呼气后，感受身体有没有松动一点点。不需要达到什么效果，只是呼吸就好。',
-        breath: { pattern:'完整练习', inhale:2, hold:0, exhale:6, phase:'呼吸', label:'吸2秒 → 补吸1秒 → 呼6秒' },
-        timerSec: 150,
-        timerLabel: '完整练习（2.5 分钟）'
-      }
-    ]
-  },
-
-  sedona: {
-    name: '释放法',
-    en: 'Sedona Method',
-    desc: 'Lester Levenson 发展的情绪释放技术。帮助你直接感受、接纳并放下情绪，而不是压制它。',
-    time: '10–20 分钟',
-    level: '入门',
-    icon: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#c07a3a" stroke-width="1.5"><path d="M9 14V4M6 7l3-3 3 3"/><path d="M5 14h8"/></svg>`,
-    color: 'rgba(192,122,58,0.1)',
-    steps: [
-      {
-        instruction: '找一个安静的地方，闭上眼睛。',
-        detail: '不需要完全安静的环境。把注意力带到身体内部，感受此刻身体的感觉——哪里紧张？哪里沉重？',
-        breath: { pattern:'自然呼吸', inhale:4, hold:0, exhale:4, phase:'呼吸', label:'放松自然地呼吸' },
-        timerSec: 60,
-        timerLabel: '安定（1 分钟）'
-      },
-      {
-        instruction: '想起一件让你难受的事。允许那个感受完整地出现。',
-        detail: '不需要分析它，也不需要解决它。只是注意它在身体哪里——是胸口？还是喉咙？它是什么颜色、什么质地？',
-        breath: null,
-        timerSec: 90,
-        timerLabel: '感受它（1.5 分钟）'
-      },
-      {
-        instruction: '问自己：「我能允许自己有这个感受吗？」',
-        detail: '答案是「能」或「不能」都没关系。只是问一问，给自己一点空间。不需要强迫自己接受。',
-        breath: { pattern:'深呼吸', inhale:4, hold:2, exhale:6, phase:'允许', label:'吸气时允许，呼气时放松' },
-        timerSec: 60,
-        timerLabel: '允许（1 分钟）'
-      },
-      {
-        instruction: '问自己：「我能放下对这个感受的抗拒吗？」',
-        detail: '想象你的情绪是一个你紧握在手里的东西。你不需要扔掉它——只是把手慢慢打开，看看会发生什么。',
-        breath: null,
-        timerSec: 90,
-        timerLabel: '松开（1.5 分钟）'
-      },
-      {
-        instruction: '问自己：「我愿意放下吗？什么时候？」',
-        detail: '如果心里有一个声音说「现在」，就轻轻地放下。如果还没准备好，完全没关系。可以下次再试。',
-        breath: { pattern:'释放呼吸', inhale:4, hold:0, exhale:8, phase:'释放', label:'呼气时想象情绪随气息流走' },
-        timerSec: 120,
-        timerLabel: '释放（2 分钟）'
-      }
-    ]
-  },
-
-  butterfly: {
-    name: '蝴蝶拥抱',
-    en: 'Butterfly Hug',
-    desc: '源自 EMDR 创伤疗法。双臂交叉轻拍身体，帮助左右脑协调处理积压的情绪记忆，特别适合创伤后感到麻木或不真实时。',
-    time: '5–10 分钟',
-    level: '适合创伤',
-    icon: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#c07a3a" stroke-width="1.5"><path d="M4 6c0-2 2-3 4-2 2-1 4 0 4 2s-1 4-4 5c-3-1-4-3-4-5z"/><path d="M9 11v4"/><path d="M7 13l2 2 2-2"/></svg>`,
-    color: 'rgba(192,122,58,0.1)',
-    steps: [
-      {
-        instruction: '把双手交叉放在胸口，就像给自己一个拥抱。',
-        detail: '左手放在右肩，右手放在左肩。或者放在胸口两侧，哪里舒服就放哪里。闭上眼睛，感受这个姿势。',
-        breath: null,
-        timerSec: 30,
-        timerLabel: '感受拥抱（30 秒）'
-      },
-      {
-        instruction: '想起一个让你有情绪的画面或感受，但不要沉进去。',
-        detail: '像从远处看着那个画面，你是观察者。允许相关的情绪浮现——也许是难过，也许是愤怒，也许只是一种说不清的沉重。',
-        breath: { pattern:'稳定呼吸', inhale:4, hold:0, exhale:4, phase:'观察', label:'平稳地呼吸，稳住自己' },
-        timerSec: 60,
-        timerLabel: '觉察（1 分钟）'
-      },
-      {
-        instruction: '开始轻轻交替拍打双肩，就像蝴蝶扇翅膀一样。',
-        detail: '左右交替，速度不快不慢，大约每秒一下。这个双侧刺激帮助大脑的左右半球协同处理情绪记忆。不需要思考为什么，只是轻轻拍就好。',
-        breath: { pattern:'同步呼吸', inhale:4, hold:0, exhale:4, phase:'拍打', label:'随着拍打节奏呼吸' },
-        timerSec: 120,
-        timerLabel: '蝴蝶拍（2 分钟）'
-      },
-      {
-        instruction: '停下来，深呼吸一口，感受一下身体有什么变化。',
-        detail: '有没有哪里松了一点？情绪有没有移动？不需要有戏剧性的变化，轻微的松动就是进展。',
-        breath: { pattern:'深呼吸', inhale:5, hold:2, exhale:7, phase:'感受', label:'深吸，慢呼，感受变化' },
-        timerSec: 60,
-        timerLabel: '感受变化（1 分钟）'
-      },
-      {
-        instruction: '可以重复 2–3 轮，或者就停在这里。',
-        detail: '结束时，把手放到大腿上，睁开眼睛，慢慢回到当下。喝一口水，感受脚踩在地上。',
-        breath: null,
-        timerSec: 30,
-        timerLabel: '回到当下（30 秒）'
-      }
-    ]
-  },
-
-  naming: {
-    name: '情绪命名法',
-    en: 'Affect Labeling',
-    desc: 'UCLA 神经科学研究：仅仅用语言说出情绪的名称，就能让大脑杏仁核活动显著降低。简单，但出乎意料地有效。',
-    time: '5 分钟',
-    level: '随时可用',
-    icon: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#c07a3a" stroke-width="1.5"><rect x="3" y="3" width="12" height="9" rx="2"/><path d="M7 16l2-4 2 4"/></svg>`,
-    color: 'rgba(192,122,58,0.1)',
-    steps: [
-      {
-        instruction: '停下来，把注意力带到身体内部。',
-        detail: '你不需要做任何事，只是暂停一下。感受此刻身体最明显的感觉——胸口？肚子？喉咙？',
-        breath: { pattern:'扎根呼吸', inhale:4, hold:0, exhale:4, phase:'停下来', label:'深呼吸，把注意力带进身体' },
-        timerSec: 30,
-        timerLabel: '暂停（30 秒）'
-      },
-      {
-        instruction: '这个感觉，最接近哪个词？',
-        detail: '不需要精准，也不需要「正确答案」。试着说出来：焦虑？委屈？愤怒？羞耻？空洞？孤独？有时候找到那个词本身就已经是一种释放。',
-        breath: null,
-        timerSec: 60,
-        timerLabel: '寻找词语（1 分钟）'
-      },
-      {
-        instruction: '对自己轻声说：「我现在感到 ___。」',
-        detail: '加上「我注意到我感到___」更好——这创造了一点距离，你是观察者，不是被情绪淹没的人。说出来，哪怕只是在心里说。',
-        breath: { pattern:'温和呼吸', inhale:4, hold:1, exhale:5, phase:'命名', label:'每次呼气时，在心里说出那个词' },
-        timerSec: 90,
-        timerLabel: '命名练习（1.5 分钟）'
-      },
-      {
-        instruction: '如果有更深的情绪在下面，继续往下找。',
-        detail: '愤怒下面常常是委屈，委屈下面常常是悲伤，悲伤下面常常是爱。层层往下，直到找到最核心的那个感受。',
-        breath: null,
-        timerSec: 90,
-        timerLabel: '往深处走（1.5 分钟）'
-      }
-    ]
-  },
-
-  innerchild: {
-    name: '内在小孩对话',
-    en: 'Inner Child Dialogue',
-    desc: '来自 IFS（内部家庭系统）疗法。你心里住着一个从未长大的孩子，带着所有童年未被处理的伤。今天来见见他/她。',
-    time: '15–20 分钟',
-    level: '深度练习',
-    icon: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#c07a3a" stroke-width="1.5"><circle cx="9" cy="6" r="3"/><path d="M5 15c0-2.2 1.8-4 4-4s4 1.8 4 4"/><path d="M3 10c0 1.1.9 2 2 2"/><path d="M15 10c0 1.1-.9 2-2 2"/></svg>`,
-    color: 'rgba(192,122,58,0.1)',
-    steps: [
-      {
-        instruction: '找一个安静、安全的地方。深呼吸，让自己安定下来。',
-        detail: '你可以闭上眼睛。告诉自己：现在是安全的，你是成年人，你有能力在这里。',
-        breath: { pattern:'扎根呼吸', inhale:5, hold:2, exhale:7, phase:'扎根', label:'深而慢，让身体先安定' },
-        timerSec: 60,
-        timerLabel: '扎根（1 分钟）'
-      },
-      {
-        instruction: '在脑海中，想象你回到了一个童年的地方。',
-        detail: '也许是家里的某个角落，也许是学校，也许是一个你记得的下午。不需要刻意选择，让第一个冒出来的画面就是那个地方。',
-        breath: null,
-        timerSec: 60,
-        timerLabel: '回到那个地方（1 分钟）'
-      },
-      {
-        instruction: '看见那个小时候的你。他/她在做什么？看起来怎么样？',
-        detail: '注意他/她的表情、姿势、眼神。他/她看起来快乐吗？还是孤独？害怕？不需要评判，只是看见。',
-        breath: { pattern:'温和呼吸', inhale:4, hold:0, exhale:5, phase:'看见', label:'呼吸稳定，温柔地看着那个孩子' },
-        timerSec: 90,
-        timerLabel: '看见他/她（1.5 分钟）'
-      },
-      {
-        instruction: '走近那个孩子，蹲下来，和他/她在同一个高度。',
-        detail: '告诉他/她：「我来了。」或者「我知道你一直在等我。」不需要说很多，就是在那里。你的到来本身就是一种疗愈。',
-        breath: null,
-        timerSec: 120,
-        timerLabel: '陪伴（2 分钟）'
-      },
-      {
-        instruction: '问问那个孩子：「你想让我知道什么？」',
-        detail: '静静地等待，看看内心有什么声音或画面浮现。可能是一句话，可能是一种感觉，可能什么都没有——这些都没关系。只是在这里陪伴就已经足够。',
-        breath: { pattern:'深呼吸', inhale:4, hold:2, exhale:6, phase:'聆听', label:'每次吸气时打开，呼气时放松' },
-        timerSec: 180,
-        timerLabel: '聆听（3 分钟）'
-      }
-    ]
-  },
-
-  pmr: {
-    name: '渐进式肌肉放松',
-    en: 'Progressive Muscle Relaxation',
-    desc: '经典的身体导向疗法。通过有意识地紧绷再放松肌肉群，打断焦虑的躯体化循环，特别适合睡前或身体紧绷感强时。',
-    time: '10–15 分钟',
-    level: '身体导向',
-    icon: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#c07a3a" stroke-width="1.5"><path d="M9 2v3M9 13v3M4 9H2M16 9h-2M5.6 5.6L3.8 3.8M14.2 14.2l-1.8-1.8M5.6 12.4l-1.8 1.8M12.4 5.6l1.8-1.8"/><circle cx="9" cy="9" r="3"/></svg>`,
-    color: 'rgba(192,122,58,0.1)',
-    steps: [
-      {
-        instruction: '躺下来，或者坐在一把有靠背的椅子上。',
-        detail: '让身体完全被支撑。闭上眼睛，深呼吸三次，感受自己的重量。',
-        breath: { pattern:'预备呼吸', inhale:4, hold:0, exhale:6, phase:'准备', label:'深吸，慢呼，放下重量' },
-        timerSec: 45,
-        timerLabel: '准备（45 秒）'
-      },
-      {
-        instruction: '从脚开始：用力弯曲脚趾，保持 5 秒……然后完全放开。',
-        detail: '放开的那一刻，感受紧绷和放松之间的对比。那种松弛感就是目标。',
-        breath: { pattern:'配合节奏', inhale:3, hold:0, exhale:5, phase:'脚部', label:'紧绷时吸气，放松时呼气' },
-        timerSec: 90,
-        timerLabel: '脚部（1.5 分钟）'
-      },
-      {
-        instruction: '向上移动到小腿和大腿——绷紧双腿肌肉，保持 5 秒……然后放开。',
-        detail: '可以感觉到大腿内侧、膝盖后面有热流涌出，那是血液回流的感觉，很好。',
-        breath: { pattern:'同步呼吸', inhale:3, hold:0, exhale:5, phase:'腿部', label:'绷紧时浅吸，放松时深呼' },
-        timerSec: 90,
-        timerLabel: '腿部（1.5 分钟）'
-      },
-      {
-        instruction: '腹部：深吸气让肚子鼓起来，保持……然后完全呼出，让腹部内收放松。',
-        detail: '这一步同时是呼吸练习。很多焦虑都积累在腹部。反复几次，感受腹部慢慢松软下来。',
-        breath: { pattern:'腹式呼吸', inhale:5, hold:3, exhale:6, phase:'腹部', label:'吸气腹鼓，呼气腹收' },
-        timerSec: 90,
-        timerLabel: '腹部（1.5 分钟）'
-      },
-      {
-        instruction: '最后：肩膀用力耸起来，靠近耳朵，保持……然后用力往下沉，放开。',
-        detail: '肩膀是情绪最常积累的地方。放开的时候，想象把承担的所有重量都一起放下去。',
-        breath: { pattern:'释放呼吸', inhale:4, hold:4, exhale:8, phase:'肩颈', label:'耸肩时吸气，落肩时长呼' },
-        timerSec: 90,
-        timerLabel: '肩颈放松（1.5 分钟）'
-      }
-    ]
-  },
-
-  safespace: {
-    name: '安全地带冥想',
-    en: 'Safe Space Meditation',
-    desc: '为有创伤史的人设计的冥想。在脑海中建立一个完全属于你、没有任何威胁的地方。每次感到不安全时都可以回到这里。',
-    time: '10–15 分钟',
-    level: '创伤友好',
-    icon: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#c07a3a" stroke-width="1.5"><path d="M9 2L3 7v9h4v-5h4v5h4V7L9 2z"/></svg>`,
-    color: 'rgba(192,122,58,0.1)',
-    steps: [
-      {
-        instruction: '闭上眼睛，深呼吸。告诉自己：现在你是安全的。',
-        detail: '如果这句话感觉不真实也没关系——只是轻轻地说一说，让它在脑子里回响。',
-        breath: { pattern:'扎根呼吸', inhale:5, hold:0, exhale:7, phase:'扎根', label:'脚踩地面，感受重力' },
-        timerSec: 45,
-        timerLabel: '扎根（45 秒）'
-      },
-      {
-        instruction: '想象一个让你感到安全、平静的地方。',
-        detail: '可以是真实的（小时候的某个角落、海边、森林），也可以是完全想象的（一个只属于你的房间，有柔软的光）。没有标准答案，哪里让你觉得轻松就去哪里。',
-        breath: null,
-        timerSec: 60,
-        timerLabel: '寻找那个地方（1 分钟）'
-      },
-      {
-        instruction: '用五感探索这个空间。你看到什么颜色？听到什么声音？',
-        detail: '光线是怎样的？温度如何？有没有气味？也许是松树、海风、或者一杯热茶的味道。越具体越好——细节会让这个地方变得真实。',
-        breath: { pattern:'探索呼吸', inhale:4, hold:1, exhale:5, phase:'感受', label:'随着呼吸，这个地方越来越清晰' },
-        timerSec: 120,
-        timerLabel: '探索（2 分钟）'
-      },
-      {
-        instruction: '在这里坐下来。感受被支撑的感觉。',
-        detail: '这个地方的一切都在保护你。没有什么能进来伤害你。让你的神经系统记住这种安全感——它随时可以回来。',
-        breath: { pattern:'安定呼吸', inhale:4, hold:2, exhale:6, phase:'安定', label:'感受被包围、被保护' },
-        timerSec: 180,
-        timerLabel: '停留（3 分钟）'
-      },
-      {
-        instruction: '给这个地方起一个名字，或者用一个词来描述它。',
-        detail: '以后任何时候，当你感到不安全，只需要想起这个词或这个名字——你的神经系统就会记住如何回到这里。',
-        breath: null,
-        timerSec: 30,
-        timerLabel: '命名（30 秒）'
-      }
-    ]
-  }
+// ═══════════════════════════════════
+// METHODS
+// ═══════════════════════════════════
+const METHODS={
+  sigh:{name:'生理叹息法',en:'Physiological Sigh',desc:'斯坦福神经科学研究证实。双吸气+长呼气，45秒内激活副交感神经，是最快平复焦虑的呼吸方式。',time:'3–5 分钟',level:'入门',steps:[
+    {instruction:'找舒适的姿势，坐或躺都可以。',detail:'放松肩膀，把手放腹部感受呼吸。给自己30秒安定下来。',breath:{inhale:4,hold:0,exhale:4,label:'自然呼吸'},timerSec:30,timerLabel:'安定（30 秒）'},
+    {instruction:'用鼻子缓慢吸气，吸到七分满……',detail:'感受腹部向外扩展。不用吸得很深，自然就好。',breath:{inhale:4,hold:0,exhale:0,label:'鼻子吸气'},timerSec:null},
+    {instruction:'……再补吸一小口，把肺充满。',detail:'这个「补吸」是关键——它重新打开肺泡，激活神经系统的平静反应。',breath:{inhale:1,hold:0,exhale:0,label:'补吸一口'},timerSec:null},
+    {instruction:'用嘴巴缓慢彻底地呼出……',detail:'呼气时间是吸气的两倍长。让腹部慢慢内收，把所有空气推出去。',breath:{inhale:0,hold:0,exhale:8,label:'嘴巴长呼'},timerSec:null},
+    {instruction:'重复 4–5 次，完整练习。',detail:'每次呼气后，感受身体有没有松动一点点。',breath:{inhale:3,hold:1,exhale:8,label:'吸3s · 补1s · 呼8s'},timerSec:180,timerLabel:'完整练习（3 分钟）'},
+  ]},
+  sedona:{name:'释放法',en:'Sedona Method',desc:'帮助你感受、接纳并释放情绪——不是压制，是真正地放下。',time:'10–15 分钟',level:'入门',steps:[
+    {instruction:'安静下来，闭上眼睛，深呼吸。',detail:'把注意力带到身体内部，感受最明显的感觉。',breath:{inhale:4,hold:0,exhale:6,label:'放松呼吸'},timerSec:60,timerLabel:'安定（1 分钟）'},
+    {instruction:'想起一件让你难受的事。允许那个感受出现。',detail:'不需要分析它。注意这个感受在身体哪里——胸口？喉咙？',breath:null,timerSec:90,timerLabel:'感受它（1.5 分钟）'},
+    {instruction:'问自己：「我能允许自己有这个感受吗？」',detail:'答案是「能」或「不能」都没关系。只是问一问。',breath:{inhale:4,hold:2,exhale:6,label:'吸气时允许，呼气时放松'},timerSec:60,timerLabel:'允许（1 分钟）'},
+    {instruction:'问自己：「我能放下对这个感受的抗拒吗？」',detail:'想象情绪是你握在手里的东西，只是把手慢慢打开。',breath:null,timerSec:90,timerLabel:'松开（1.5 分钟）'},
+    {instruction:'问自己：「我愿意放下吗？什么时候？」',detail:'如果心里有「现在」，就轻轻地放下。还没准备好完全没关系。',breath:{inhale:4,hold:0,exhale:8,label:'呼气时想象情绪流走'},timerSec:120,timerLabel:'释放（2 分钟）'},
+  ]},
+  butterfly:{name:'蝴蝶拥抱',en:'Butterfly Hug',desc:'源自 EMDR 创伤疗法。双臂交叉轻拍，帮助左右脑协调处理情绪记忆。',time:'5–10 分钟',level:'创伤友好',steps:[
+    {instruction:'双手交叉放在胸口，给自己一个拥抱。',detail:'左手放右肩，右手放左肩。闭上眼睛，感受安全感。',breath:null,timerSec:30,timerLabel:'感受拥抱（30 秒）'},
+    {instruction:'想起一个有情绪的画面，像从远处看着它。',detail:'你是观察者，不是被淹没的人。',breath:{inhale:4,hold:0,exhale:4,label:'平稳呼吸'},timerSec:60,timerLabel:'觉察（1 分钟）'},
+    {instruction:'开始轻轻交替拍打双肩，像蝴蝶扇翅膀。',detail:'左右交替，每秒大约一下。双侧刺激帮助大脑整合情绪。',breath:{inhale:4,hold:0,exhale:4,label:'随拍打节奏呼吸'},timerSec:120,timerLabel:'蝴蝶拍（2 分钟）'},
+    {instruction:'停下来，深呼吸，感受身体的变化。',detail:'有没有哪里松了？情绪有没有移动？',breath:{inhale:5,hold:2,exhale:7,label:'深吸慢呼'},timerSec:60,timerLabel:'感受变化（1 分钟）'},
+    {instruction:'把手放到大腿上，慢慢睁开眼睛。',detail:'感受脚踩在地上，回到当下，喝一口水。',breath:null,timerSec:30,timerLabel:'回到当下（30 秒）'},
+  ]},
+  naming:{name:'情绪命名法',en:'Affect Labeling',desc:'UCLA 研究：说出情绪名称，杏仁核活动降低。简单，随时可用。',time:'5 分钟',level:'随时可用',steps:[
+    {instruction:'停下来，把注意力带进身体内部。',detail:'你不需要做任何事，只是暂停。',breath:{inhale:4,hold:0,exhale:4,label:'深呼吸'},timerSec:30,timerLabel:'暂停（30 秒）'},
+    {instruction:'这个感觉，最接近哪个词？',detail:'焦虑？委屈？愤怒？羞耻？空洞？孤独？找到那个词。',breath:null,timerSec:60,timerLabel:'寻找词语（1 分钟）'},
+    {instruction:'对自己说：「我注意到我感到 ___。」',detail:'加上「我注意到」创造了距离，你是观察者而不是被淹没的人。',breath:{inhale:4,hold:1,exhale:5,label:'每次呼气时，说出那个词'},timerSec:90,timerLabel:'命名练习（1.5 分钟）'},
+    {instruction:'如果有更深的情绪，继续往下找。',detail:'愤怒下面是委屈，委屈下面是悲伤，悲伤下面是爱。',breath:null,timerSec:90,timerLabel:'往深处走（1.5 分钟）'},
+  ]},
+  innerchild:{name:'内在小孩对话',en:'Inner Child Dialogue',desc:'来自 IFS 疗法。你心里住着一个从未长大的孩子，今天来见见他/她。',time:'15–20 分钟',level:'深度练习',steps:[
+    {instruction:'找安静的地方，深呼吸，安定下来。',detail:'告诉自己：现在是安全的，你是成年人，你有能力在这里。',breath:{inhale:5,hold:2,exhale:7,label:'深而慢，身体先安定'},timerSec:60,timerLabel:'扎根（1 分钟）'},
+    {instruction:'在脑海中，回到一个童年的地方。',detail:'不需要刻意选，让第一个冒出来的画面就是那里。',breath:null,timerSec:60,timerLabel:'回到那个地方（1 分钟）'},
+    {instruction:'看见小时候的你。他/她在做什么？',detail:'注意表情、姿势、眼神。只是看见，不评判。',breath:{inhale:4,hold:0,exhale:5,label:'温柔地看着那个孩子'},timerSec:90,timerLabel:'看见他/她（1.5 分钟）'},
+    {instruction:'走近那个孩子，蹲下来，和他/她在同一高度。',detail:'告诉他/她：「我来了。」你的到来本身就是疗愈。',breath:null,timerSec:120,timerLabel:'陪伴（2 分钟）'},
+    {instruction:'问：「你想让我知道什么？」然后静静等待。',detail:'可能是一句话，一种感觉，也可能什么都没有——都没关系。',breath:{inhale:4,hold:2,exhale:6,label:'吸气时打开，呼气时放松'},timerSec:180,timerLabel:'聆听（3 分钟）'},
+  ]},
+  pmr:{name:'渐进式肌肉放松',en:'Progressive Muscle Relaxation',desc:'经典身体疗法。紧绷再放松肌肉群，打断焦虑循环，适合睡前。',time:'10–15 分钟',level:'身体导向',steps:[
+    {instruction:'躺下，或坐在有靠背的椅子上。',detail:'让身体完全被支撑，深呼吸三次感受重量。',breath:{inhale:4,hold:0,exhale:6,label:'深吸慢呼，放下重量'},timerSec:45,timerLabel:'准备（45 秒）'},
+    {instruction:'从脚开始：弯曲脚趾，保持 5 秒……然后完全放开。',detail:'感受紧绷与放松的对比，那种松弛感就是目标。',breath:{inhale:3,hold:0,exhale:5,label:'紧绷时吸气，放松时呼气'},timerSec:90,timerLabel:'脚部（1.5 分钟）'},
+    {instruction:'向上：绷紧小腿和大腿，保持 5 秒……放开。',detail:'感觉大腿有热流涌出——血液回流，很好。',breath:{inhale:3,hold:0,exhale:5,label:'绷紧时浅吸，放松时深呼'},timerSec:90,timerLabel:'腿部（1.5 分钟）'},
+    {instruction:'腹部：深吸气让肚子鼓起，保持……然后全部呼出。',detail:'很多焦虑积累在腹部，反复几次感受它慢慢松软。',breath:{inhale:5,hold:3,exhale:6,label:'吸气腹鼓，呼气腹收'},timerSec:90,timerLabel:'腹部（1.5 分钟）'},
+    {instruction:'最后：耸肩靠近耳朵，保持……然后用力往下沉。',detail:'放开时，想象把所有承担的重量一起放下去。',breath:{inhale:4,hold:4,exhale:8,label:'耸肩时吸气，落肩时长呼'},timerSec:90,timerLabel:'肩颈（1.5 分钟）'},
+  ]},
+  safespace:{name:'安全地带冥想',en:'Safe Space Meditation',desc:'为有创伤史的人设计。在脑海中建立完全属于你的安全之地。',time:'10–15 分钟',level:'创伤友好',steps:[
+    {instruction:'闭上眼睛，深呼吸。告诉自己：现在你是安全的。',detail:'如果这句话感觉不真实也没关系，只是轻轻说一说。',breath:{inhale:5,hold:0,exhale:7,label:'脚踩地面，感受重力'},timerSec:45,timerLabel:'扎根（45 秒）'},
+    {instruction:'想象一个让你感到安全、平静的地方。',detail:'可以是真实的，也可以是完全想象的。没有标准答案。',breath:null,timerSec:60,timerLabel:'寻找那个地方（1 分钟）'},
+    {instruction:'用五感探索这个空间。颜色、声音、气味……',detail:'越具体越好，细节让这里变得真实。',breath:{inhale:4,hold:1,exhale:5,label:'随呼吸，这个地方越来越清晰'},timerSec:120,timerLabel:'探索（2 分钟）'},
+    {instruction:'在这里坐下来，感受被支撑的感觉。',detail:'没有什么能进来伤害你，让神经系统记住这种安全感。',breath:{inhale:4,hold:2,exhale:6,label:'感受被包围、被保护'},timerSec:180,timerLabel:'停留（3 分钟）'},
+    {instruction:'给这个地方起一个名字或一个词。',detail:'以后只需想起这个词，神经系统就会记住如何回到这里。',breath:null,timerSec:30,timerLabel:'命名（30 秒）'},
+  ]},
 };
 
-// ─── PRACTICE STATE ──────────────────────────────────────
-let currentMethod = null;
-let currentStep = 0;
-let timerInterval = null;
-let timerRemaining = 0;
-let breathInterval = null;
-let breathPhaseIdx = 0;
+// ═══════════════════════════════════
+// THEME
+// ═══════════════════════════════════
+function toggleTheme(){
+  const h=document.documentElement,isDark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',isDark?'light':'dark');
+  const icon=document.getElementById('themeIcon');
+  if(isDark){icon.innerHTML='<circle cx="7.5" cy="7.5" r="3"/><path d="M7.5 1v1.5M7.5 12.5V14M1 7.5h1.5M12.5 7.5H14M3.1 3.1l1.06 1.06M10.84 10.84l1.06 1.06M3.1 11.9l1.06-1.06M10.84 4.16l1.06-1.06"/>';}
+  else{icon.innerHTML='<path d="M12 7.5A4.5 4.5 0 0 1 7.5 12 4.5 4.5 0 0 1 3 7.5 4.5 4.5 0 0 1 7.5 3c.26 0 .5.02.74.06A4.5 4.5 0 0 0 9 11.94 4.5 4.5 0 0 1 12 7.5z"/>';}
+}
 
-// ─── RENDER METHODS ──────────────────────────────────────
-function renderMethods() {
-  const grid = document.getElementById('methodGrid');
-  Object.entries(METHODS).forEach(([key, m]) => {
-    const card = document.createElement('div');
-    card.className = 'method-card';
-    card.onclick = () => openPractice(key);
-    card.innerHTML = `
-      <div class="method-card-icon" style="background:${m.color}">${m.icon}</div>
-      <div>
-        <div class="method-card-name">${m.name}</div>
-        <div class="method-card-en">${m.en}</div>
-      </div>
-      <div class="method-card-desc">${m.desc}</div>
-      <div class="method-card-meta">
-        <span class="method-pill">${m.time}</span>
-        <span class="method-pill">${m.level}</span>
-      </div>
-    `;
+// ═══════════════════════════════════
+// PAGE NAV
+// ═══════════════════════════════════
+function showPage(name){
+  ['home','heal','admin'].forEach(p=>{
+    document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===name);
+  });
+  document.getElementById('navHome').classList.toggle('active',name==='home');
+  document.getElementById('navHeal').classList.toggle('active',name==='heal');
+  window.scrollTo(0,0);
+  if(name==='admin')initAdmin();
+}
+
+// check for #admin in URL
+if(location.hash==='#admin') showPage('admin');
+
+// ═══════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════
+function renderQuiz(){
+  const c=document.getElementById('quizOptions');
+  QUIZ.forEach((q,i)=>{
+    const btn=document.createElement('button');
+    btn.className='quiz-opt';
+    btn.innerHTML=`<span class="quiz-opt-icon">${q.icon}</span><span class="quiz-opt-text"><span class="quiz-opt-main">${q.main}</span><span class="quiz-opt-hint">${q.hint}</span></span>`;
+    btn.onclick=()=>selectQuiz(i,btn);
+    c.appendChild(btn);
+  });
+}
+function selectQuiz(idx,btn){
+  document.querySelectorAll('.quiz-opt').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const q=QUIZ[idx],result=document.getElementById('quizResult'),recs=document.getElementById('quizRecs');
+  recs.innerHTML='';
+  q.recs.forEach(key=>{
+    const m=METHODS[key],el=document.createElement('div');
+    el.className='quiz-rec';
+    el.innerHTML=`<div class="quiz-rec-info"><div class="quiz-rec-name">${m.name}</div><div class="quiz-rec-why">${q.why[key]}</div></div><span class="quiz-rec-arrow">→</span>`;
+    el.onclick=()=>openPractice(key);
+    recs.appendChild(el);
+  });
+  result.style.display='block';
+  result.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ═══════════════════════════════════
+// METHODS GRID
+// ═══════════════════════════════════
+function renderMethods(){
+  const grid=document.getElementById('methodGrid');
+  const icons={sigh:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--ember)" stroke-width="1.5"><circle cx="8" cy="8" r="5"/><path d="M8 5v3l2 1"/></svg>`,sedona:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--ember)" stroke-width="1.5"><path d="M8 13V3M5 6l3-3 3 3"/><path d="M4 13h8"/></svg>`,butterfly:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--ember)" stroke-width="1.5"><path d="M8 8C8 5 6 3 4 4s-2 4 0 6 4 2 4-2z"/><path d="M8 8c0-3 2-5 4-4s2 4 0 6-4 2-4-2z"/><path d="M8 8v5"/></svg>`,naming:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--ember)" stroke-width="1.5"><rect x="2" y="3" width="12" height="8" rx="2"/><path d="M6 15l2-4 2 4"/></svg>`,innerchild:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--ember)" stroke-width="1.5"><circle cx="8" cy="5.5" r="2.5"/><path d="M4 14c0-2.2 1.8-4 4-4s4 1.8 4 4"/></svg>`,pmr:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--ember)" stroke-width="1.5"><path d="M8 2v2M8 12v2M2 8h2M12 8h2"/><circle cx="8" cy="8" r="3"/></svg>`,safespace:`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--ember)" stroke-width="1.5"><path d="M8 1L2 6v9h4v-4h4v4h4V6L8 1z"/></svg>`};
+  Object.entries(METHODS).forEach(([key,m])=>{
+    const card=document.createElement('div');
+    card.className='method-card';
+    card.onclick=()=>openPractice(key);
+    card.innerHTML=`<div class="method-card-icon">${icons[key]||''}</div><div><div class="method-card-name">${m.name}</div><div class="method-card-en">${m.en}</div></div><div class="method-card-desc">${m.desc}</div><div class="method-pills"><span class="method-pill">${m.time}</span><span class="method-pill">${m.level}</span></div>`;
     grid.appendChild(card);
   });
 }
 
-// ─── OPEN PRACTICE ───────────────────────────────────────
-function openPractice(key) {
-  currentMethod = METHODS[key];
-  currentStep = 0;
-  document.getElementById('pmTitle').textContent = currentMethod.name;
-  document.getElementById('pmEn').textContent = currentMethod.en;
-  document.getElementById('pmSub').textContent = currentMethod.desc;
-  renderDots();
-  renderStep();
+// ═══════════════════════════════════
+// PRACTICE ENGINE
+// ═══════════════════════════════════
+let curMethod=null,curStep=0,timerIv=null,blobAnim=null;
+function openPractice(key){
+  curMethod=METHODS[key];curStep=0;
+  document.getElementById('pmTitle').textContent=curMethod.name;
+  document.getElementById('pmEn').textContent=curMethod.en;
+  document.getElementById('pmSub').textContent=curMethod.desc;
+  renderDots();renderStep();
   document.getElementById('practiceModal').classList.add('open');
 }
-
-function closePractice() {
-  clearTimer();
-  clearBreath();
-  document.getElementById('practiceModal').classList.remove('open');
+function closePractice(){stopBreath();stopTimer();document.getElementById('practiceModal').classList.remove('open');}
+function renderDots(){
+  const c=document.getElementById('pmDots'),total=curMethod.steps.length;
+  c.innerHTML='';
+  for(let i=0;i<total;i++){const d=document.createElement('div');d.className='progress-dot'+(i<curStep?' done':i===curStep?' active':'');c.appendChild(d);}
+  document.getElementById('pmStepLbl').textContent=`${curStep+1} / ${total}`;
 }
-
-function renderDots() {
-  const dots = document.getElementById('pmDots');
-  const total = currentMethod.steps.length;
-  dots.innerHTML = '';
-  for (let i = 0; i < total; i++) {
-    const d = document.createElement('div');
-    d.className = 'progress-dot' + (i < currentStep ? ' done' : i === currentStep ? ' active' : '');
-    dots.appendChild(d);
+function renderStep(){
+  stopBreath();stopTimer();
+  const step=curMethod.steps[curStep],total=curMethod.steps.length,isLast=curStep===total-1;
+  const nums=['一','二','三','四','五','六','七'];
+  let html=`<div class="step-content"><div class="step-num-badge">${nums[curStep]}</div><div class="step-instruction">${step.instruction}</div><div class="step-detail">${step.detail}</div>`;
+  if(step.breath){
+    const parts=[];
+    if(step.breath.inhale>0)parts.push(`吸 ${step.breath.inhale}s`);
+    if(step.breath.hold>0)parts.push(`屏 ${step.breath.hold}s`);
+    if(step.breath.exhale>0)parts.push(`呼 ${step.breath.exhale}s`);
+    html+=`<div class="breath-block" id="breathBlock"><div class="breath-svg-wrap"><svg class="breath-svg" id="breathSvg" viewBox="0 0 200 200"></svg><div class="breath-center-text"><div class="breath-phase-word" id="breathWord">准备</div><div class="breath-count" id="breathCount">—</div></div></div><div class="breath-pattern-label">${step.breath.label}</div><div class="breath-rhythm" id="breathRhythm">${parts.join(' · ')}</div></div>`;
   }
-  document.getElementById('pmStepLabel').textContent = `${currentStep + 1} / ${total}`;
-}
-
-function renderStep() {
-  clearTimer();
-  clearBreath();
-  const step = currentMethod.steps[currentStep];
-  const total = currentMethod.steps.length;
-  const isLast = currentStep === total - 1;
-
-  let html = `<div class="step-content">`;
-  html += `<div class="step-num-badge">${['一','二','三','四','五','六','七'][currentStep]}</div>`;
-  html += `<div class="step-instruction">${step.instruction}</div>`;
-  html += `<div class="step-detail">${step.detail}</div>`;
-
-  if (step.breath) {
-    html += `<div class="breath-block" id="breathBlock">
-      <div class="breath-circle-wrap">
-        <div class="breath-circle" id="breathCircle">${step.breath.phase}</div>
-      </div>
-      <div class="breath-phase" id="breathPhaseText">${step.breath.label}</div>
-      <div class="breath-pattern">${step.breath.pattern}</div>
-    </div>`;
+  if(step.timerSec){
+    const circ=2*Math.PI*38;
+    html+=`<div class="timer-block"><div class="timer-ring-wrap"><svg width="88" height="88" viewBox="0 0 88 88"><circle class="timer-ring-bg" cx="44" cy="44" r="38"/><circle class="timer-ring-fill" id="timerRing" cx="44" cy="44" r="38" stroke-dasharray="${circ}" stroke-dashoffset="0"/></svg><div class="timer-text" id="timerText">${fmtTime(step.timerSec)}</div></div><div class="timer-lbl">${step.timerLabel}</div><div class="timer-controls"><button class="timer-btn tp" id="timerStartBtn" onclick="startTimer(${step.timerSec})">开始计时</button><button class="timer-btn" onclick="resetTimer(${step.timerSec})">重置</button></div></div>`;
   }
+  html+=`<div class="step-nav"><button class="snb" onclick="prevStep()" ${curStep===0?'disabled':''}>← 上一步</button>${isLast?`<button class="snb next" onclick="completeMethod()">完成 ✓</button>`:`<button class="snb next" onclick="nextStep()">下一步 →</button>`}</div></div>`;
+  document.getElementById('pmStepContent').innerHTML=html;
+  document.getElementById('pmBody').scrollTop=0;
+  if(step.breath)startBreath(step.breath);
+}
+function nextStep(){if(curStep<curMethod.steps.length-1){curStep++;renderDots();renderStep();}}
+function prevStep(){if(curStep>0){curStep--;renderDots();renderStep();}}
+function completeMethod(){
+  stopBreath();stopTimer();
+  document.getElementById('pmStepContent').innerHTML=`<div class="complete-block"><div class="complete-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="var(--ember)" stroke-width="1.5"><path d="M22 6L10 18l-6-6"/></svg></div><div class="complete-title">你做到了。</div><div class="complete-sub" style="margin-bottom:20px">每一次练习，都是给内在小孩的礼物。</div><div style="display:flex;justify-content:center;gap:10px"><button class="snb" onclick="closePractice()">结束</button><button class="snb next" onclick="closePractice();openComposeModal()">写下感受</button></div></div>`;
+  document.querySelectorAll('.progress-dot').forEach(d=>{d.classList.remove('active');d.classList.add('done');});
+}
+function fmtTime(s){const m=Math.floor(s/60),r=s%60;return m>0?`${m}:${String(r).padStart(2,'0')}`:` ${s}s`;}
+function startTimer(total){
+  const btn=document.getElementById('timerStartBtn');
+  if(btn){btn.textContent='计时中…';btn.disabled=true;}
+  let rem=total;const circ=2*Math.PI*38;
+  timerIv=setInterval(()=>{
+    rem--;
+    const el=document.getElementById('timerText'),ring=document.getElementById('timerRing');
+    if(el)el.textContent=fmtTime(rem);
+    if(ring)ring.style.strokeDashoffset=circ*(1-rem/total);
+    if(rem<=0){stopTimer();if(el)el.textContent='完成 ✓';showToast('这一步完成了 ✓');}
+  },1000);
+}
+function resetTimer(total){
+  stopTimer();
+  const el=document.getElementById('timerText'),ring=document.getElementById('timerRing'),btn=document.getElementById('timerStartBtn');
+  if(el)el.textContent=fmtTime(total);if(ring)ring.style.strokeDashoffset=0;if(btn){btn.textContent='开始计时';btn.disabled=false;}
+}
+function stopTimer(){if(timerIv){clearInterval(timerIv);timerIv=null;}}
 
-  if (step.timerSec) {
-    html += `<div class="timer-block">
-      <div class="timer-ring-wrap">
-        <svg width="80" height="80" viewBox="0 0 80 80">
-          <circle class="timer-ring-bg" cx="40" cy="40" r="34"/>
-          <circle class="timer-ring-fill" id="timerRing" cx="40" cy="40" r="34"
-            stroke-dasharray="${2 * Math.PI * 34}"
-            stroke-dashoffset="0"/>
-        </svg>
-        <div class="timer-text" id="timerText">${formatTime(step.timerSec)}</div>
-      </div>
-      <div class="timer-label">${step.timerLabel}</div>
-      <div class="timer-controls">
-        <button class="timer-btn primary" id="timerStartBtn" onclick="startTimer(${step.timerSec})">开始计时</button>
-        <button class="timer-btn" onclick="resetTimer(${step.timerSec})">重置</button>
-      </div>
-    </div>`;
+// BREATH BLOB
+function buildBlobPath(cx,cy,baseR,t,scale,wobble){
+  const pts=12,points=[];
+  for(let i=0;i<pts;i++){
+    const angle=(i/pts)*Math.PI*2;
+    const noise=Math.sin(angle*3+t*.8)*wobble*.15+Math.cos(angle*2-t*.5)*wobble*.1+Math.sin(angle*5+t*1.1)*wobble*.05;
+    const r=baseR*scale*(1+noise);
+    points.push([cx+r*Math.cos(angle),cy+r*Math.sin(angle)]);
   }
-
-  html += `<div class="step-nav">
-    <button class="step-nav-btn" onclick="prevStep()" ${currentStep === 0 ? 'disabled' : ''}>← 上一步</button>
-    ${isLast
-      ? `<button class="step-nav-btn next-btn" onclick="completeMethod()">完成练习 ✓</button>`
-      : `<button class="step-nav-btn next-btn" onclick="nextStep()">下一步 →</button>`
-    }
-  </div>`;
-  html += '</div>';
-
-  document.getElementById('pmStepContent').innerHTML = html;
-
-  if (step.breath) startBreath(step.breath);
-}
-
-function nextStep() {
-  if (currentStep < currentMethod.steps.length - 1) {
-    currentStep++;
-    renderDots();
-    renderStep();
-    document.querySelector('#practiceModal .modal-body').scrollTop = 0;
+  let d=`M ${points[0][0].toFixed(2)} ${points[0][1].toFixed(2)}`;
+  for(let i=0;i<pts;i++){
+    const p0=points[(i-1+pts)%pts],p1=points[i],p2=points[(i+1)%pts],p3=points[(i+2)%pts];
+    const cp1x=p1[0]+(p2[0]-p0[0])*.18,cp1y=p1[1]+(p2[1]-p0[1])*.18;
+    const cp2x=p2[0]-(p3[0]-p1[0])*.18,cp2y=p2[1]-(p3[1]-p1[1])*.18;
+    d+=` C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${p2[0].toFixed(2)} ${p2[1].toFixed(2)}`;
   }
+  return d+' Z';
 }
-function prevStep() {
-  if (currentStep > 0) {
-    currentStep--;
-    renderDots();
-    renderStep();
-    document.querySelector('#practiceModal .modal-body').scrollTop = 0;
+function startBreath(b){
+  const svg=document.getElementById('breathSvg');if(!svg)return;
+  svg.innerHTML='';
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('class','breath-blob-path');svg.appendChild(path);
+  const phases=[];
+  if(b.inhale>0)phases.push({word:'吸气',dur:b.inhale,targetScale:.82,wobble:4});
+  if(b.hold>0)phases.push({word:'屏息',dur:b.hold,targetScale:.82,wobble:2});
+  if(b.exhale>0)phases.push({word:'呼气',dur:b.exhale,targetScale:.48,wobble:6});
+  if(!phases.length)return;
+  let pi=0,phaseStart=performance.now(),blobT=0,blobScale=.55;
+  function loop(now){
+    blobT+=.016;
+    const svg2=document.getElementById('breathSvg');if(!svg2)return;
+    const phase=phases[pi%phases.length],elapsed=(now-phaseStart)/1000;
+    blobScale=blobScale+(phase.targetScale-blobScale)*.04;
+    const pathEl=svg2.querySelector('.breath-blob-path');
+    if(pathEl)pathEl.setAttribute('d',buildBlobPath(100,100,78,blobT,blobScale,phase.wobble));
+    const wEl=document.getElementById('breathWord'),cEl=document.getElementById('breathCount');
+    if(wEl)wEl.textContent=phase.word;
+    if(cEl){const rem=Math.ceil(phase.dur-elapsed);cEl.textContent=rem>0?rem:phase.dur;}
+    if(elapsed>=phase.dur){pi++;phaseStart=now;}
+    blobAnim=requestAnimationFrame(loop);
   }
+  blobAnim=requestAnimationFrame(loop);
 }
-function completeMethod() {
-  clearTimer(); clearBreath();
-  const html = `<div class="complete-block">
-    <div class="complete-icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c07a3a" stroke-width="1.5">
-        <path d="M20 6L9 17l-5-5"/>
-      </svg>
-    </div>
-    <div class="complete-title">你做到了。</div>
-    <div class="complete-sub">每一次练习，都是给内在小孩的一份礼物。不管你感受到了什么，这都很好。<br><br>如果你愿意，可以把这次练习后的感受写下来，匿名分享在这里。</div>
-    <div style="display:flex;justify-content:center;gap:10px;margin-top:24px">
-      <button class="step-nav-btn" onclick="closePractice()">结束</button>
-      <button class="step-nav-btn next-btn" onclick="openComposeModal(); closePractice()">写下感受</button>
-    </div>
-  </div>`;
-  document.getElementById('pmStepContent').innerHTML = html;
-  document.getElementById('pmDots').querySelectorAll('.progress-dot').forEach(d => d.classList.add('done'));
-}
+function stopBreath(){if(blobAnim){cancelAnimationFrame(blobAnim);blobAnim=null;}}
 
-// ─── TIMER ───────────────────────────────────────────────
-function formatTime(sec) {
-  const m = Math.floor(sec / 60), s = sec % 60;
-  return m > 0 ? `${m}:${String(s).padStart(2,'0')}` : `${s}s`;
-}
-function startTimer(total) {
-  const btn = document.getElementById('timerStartBtn');
-  if (btn) { btn.textContent = '计时中…'; btn.disabled = true; }
-  timerRemaining = total;
-  const circ = 2 * Math.PI * 34;
-  timerInterval = setInterval(() => {
-    timerRemaining--;
-    const el = document.getElementById('timerText');
-    const ring = document.getElementById('timerRing');
-    if (el) el.textContent = formatTime(timerRemaining);
-    if (ring) ring.style.strokeDashoffset = circ * (1 - timerRemaining / total);
-    if (timerRemaining <= 0) {
-      clearTimer();
-      if (el) el.textContent = '完成';
-      showToast('这一步完成了 ✓');
-    }
-  }, 1000);
-}
-function resetTimer(total) {
-  clearTimer();
-  const el = document.getElementById('timerText');
-  const ring = document.getElementById('timerRing');
-  const btn = document.getElementById('timerStartBtn');
-  if (el) el.textContent = formatTime(total);
-  if (ring) ring.style.strokeDashoffset = 0;
-  if (btn) { btn.textContent = '开始计时'; btn.disabled = false; }
-}
-function clearTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+// ═══════════════════════════════════
+// STORIES — SUPABASE
+// ═══════════════════════════════════
+let currentFilter='全部',selectedTag='原生家庭';
 
-// ─── BREATH GUIDE ────────────────────────────────────────
-function startBreath(b) {
-  const phases = [];
-  if (b.inhale > 0) phases.push({ label:'吸气', duration: b.inhale * 1000, cls:'expand' });
-  if (b.hold > 0) phases.push({ label:'屏息', duration: b.hold * 1000, cls:'hold' });
-  if (b.exhale > 0) phases.push({ label:'呼气', duration: b.exhale * 1000, cls:'contract' });
-  if (phases.length === 0) return;
-
-  let pi = 0;
-  function runPhase() {
-    const circle = document.getElementById('breathCircle');
-    const phaseText = document.getElementById('breathPhaseText');
-    if (!circle) return;
-    const p = phases[pi % phases.length];
-    circle.className = 'breath-circle ' + p.cls;
-    circle.textContent = p.label;
-    if (phaseText) phaseText.textContent = p.label + '…';
-    pi++;
-    breathInterval = setTimeout(runPhase, p.duration);
-  }
-  runPhase();
-}
-function clearBreath() { if (breathInterval) { clearTimeout(breathInterval); breathInterval = null; } }
-
-// ─── STORIES ─────────────────────────────────────────────
-let stories = [...STORIES];
-let currentFilter = '全部';
-let selectedTag = '原生家庭';
-let nextId = 100;
-
-function renderStories() {
-  const list = document.getElementById('storiesList');
-  const filtered = currentFilter === '全部' ? stories : stories.filter(s => s.tag === currentFilter);
-  list.innerHTML = '';
-  filtered.forEach((s, i) => {
-    const el = document.createElement('div');
-    el.className = 'story';
-    el.style.animation = `storyIn 0.4s ${i * 0.05}s ease both`;
-    el.innerHTML = `
-      <div class="story-meta">
-        <span class="story-tag">${s.tag}</span>
-        <div class="story-dot"></div>
-        <span class="story-loc">${s.time} · ${s.loc}</span>
-      </div>
-      <div class="story-body">${escHtml(s.body)}</div>
-      <div class="story-footer">
-        <button class="story-action ${s.liked?'liked':''}" onclick="toggleLike(${s.id})">
-          <svg viewBox="0 0 16 16" fill="${s.liked?'currentColor':'none'}" stroke="currentColor" stroke-width="1.5">
-            <path d="M8 13s-6-3.5-6-7.5a4 4 0 0 1 6-3.44A4 4 0 0 1 14 5.5c0 4-6 7.5-6 7.5z"/>
-          </svg>
-          我也是
-        </button>
-        <button class="story-action" onclick="openComposeModal()">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M2 10c0 .55.45 1 1 1h2l2 3 2-3h4c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1z"/>
-          </svg>
-          回应
-        </button>
-        <span class="story-resonance">${s.likes.toLocaleString()} 人感同身受</span>
-      </div>`;
+async function loadStories(){
+  const list=document.getElementById('storiesList');
+  list.innerHTML='<div class="feed-loading">加载中…</div>';
+  let query=sb.from('stories').select('*').eq('status','approved').order('created_at',{ascending:false}).limit(50);
+  if(currentFilter!=='全部')query=query.eq('tag',currentFilter);
+  const{data,error}=await query;
+  if(error){list.innerHTML='<div class="feed-empty">加载失败，请刷新重试。</div>';return;}
+  if(!data||data.length===0){list.innerHTML='<div class="feed-empty">还没有声音。<br>你愿意第一个说出来吗？</div>';return;}
+  list.innerHTML='';
+  data.forEach((s,i)=>{
+    const el=document.createElement('div');
+    el.className='story';el.style.animation=`storyIn .4s ${i*.05}s ease both`;
+    const ago=timeAgo(s.created_at);
+    el.innerHTML=`<div class="story-meta"><span class="story-tag">${esc(s.tag)}</span><div class="story-dot"></div><span class="story-loc">${ago}</span></div><div class="story-body">${esc(s.body)}</div><div class="story-footer"><button class="story-action" onclick="likeStory(${s.id},${s.likes},this)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13s-6-3.5-6-7.5a4 4 0 0 1 6-3.44A4 4 0 0 1 14 5.5c0 4-6 7.5-6 7.5z"/></svg>我也是</button><button class="story-action" onclick="openComposeModal()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10c0 .55.45 1 1 1h2l2 3 2-3h4c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1z"/></svg>回应</button><span class="story-resonance">${s.likes.toLocaleString()} 人感同身受</span></div>`;
     list.appendChild(el);
   });
 }
-function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function toggleLike(id) {
-  const s = stories.find(x => x.id === id);
-  if (!s) return;
-  s.liked ? (s.likes--, s.liked=false) : (s.likes++, s.liked=true, showToast('已记录 ♡'));
-  renderStories();
+
+async function likeStory(id,currentLikes,btn){
+  if(btn.classList.contains('liked'))return;
+  btn.classList.add('liked');
+  btn.querySelector('svg').setAttribute('fill','currentColor');
+  const newLikes=currentLikes+1;
+  const{error}=await sb.from('stories').update({likes:newLikes}).eq('id',id);
+  if(!error){
+    const resonance=btn.closest('.story-footer').querySelector('.story-resonance');
+    if(resonance)resonance.textContent=`${newLikes.toLocaleString()} 人感同身受`;
+    showToast('已记录 ♡');
+  }
 }
 
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.tag;
-    renderStories();
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');currentFilter=btn.dataset.tag;loadStories();
   });
 });
 
-// ─── COMPOSE ─────────────────────────────────────────────
-const quickInput = document.getElementById('quickCompose');
-const sendBtn = document.getElementById('composeSendBtn');
-quickInput.addEventListener('input', function() {
-  sendBtn.disabled = !this.value.trim();
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 160) + 'px';
+// COMPOSE
+const qi=document.getElementById('quickCompose'),sb2=document.getElementById('composeSendBtn');
+qi.addEventListener('input',function(){
+  sb2.disabled=!this.value.trim();
+  this.style.height='auto';this.style.height=Math.min(this.scrollHeight,140)+'px';
 });
-quickInput.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (this.value.trim()) quickSend(); }
-});
-function quickSend() {
-  const val = quickInput.value.trim();
-  if (!val) return;
-  addStory('其他', val, '你的城市');
-  quickInput.value = ''; quickInput.style.height = 'auto'; sendBtn.disabled = true;
-  showToast('已匿名发出，谢谢你的勇气');
-  resetFilter();
+qi.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(this.value.trim())quickSend();}});
+
+async function quickSend(){
+  const v=qi.value.trim();if(!v)return;
+  qi.value='';qi.style.height='auto';sb2.disabled=true;
+  await submitToSupabase('其他',v);
 }
-function openComposeModal() { document.getElementById('composeModal').classList.add('open'); }
-function closeComposeModal() { document.getElementById('composeModal').classList.remove('open'); }
-document.getElementById('composeModal').addEventListener('click', function(e) { if (e.target===this) closeComposeModal(); });
-document.querySelectorAll('#modalTags .modal-tag').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#modalTags .modal-tag').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected'); selectedTag = btn.dataset.tag;
+function openComposeModal(){document.getElementById('composeModal').classList.add('open');}
+function closeComposeModal(){document.getElementById('composeModal').classList.remove('open');}
+document.getElementById('composeModal').addEventListener('click',function(e){if(e.target===this)closeComposeModal();});
+document.querySelectorAll('#cTags .ctag').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#cTags .ctag').forEach(b=>b.classList.remove('sel'));
+    btn.classList.add('sel');selectedTag=btn.dataset.tag;
   });
 });
-function submitStory() {
-  const content = document.getElementById('modalContent').value.trim();
-  if (!content) { showToast('先写点什么吧'); return; }
-  addStory(selectedTag, content, '某处');
-  document.getElementById('modalContent').value = '';
-  closeComposeModal();
-  showToast('已匿名发出，谢谢你的勇气');
-  resetFilter();
+async function submitStory(){
+  const c=document.getElementById('cContent').value.trim();
+  if(!c){showToast('先写点什么吧');return;}
+  const btn=document.getElementById('cSubmitBtn');
+  btn.disabled=true;btn.textContent='发送中…';
+  await submitToSupabase(selectedTag,c);
+  document.getElementById('cContent').value='';closeComposeModal();
+  btn.disabled=false;btn.textContent='发出去';
 }
-function addStory(tag, body, loc) {
-  stories.unshift({ id:nextId++, tag, loc, time:'刚刚', likes:0, body, liked:false });
-  renderStories();
-  setTimeout(() => document.getElementById('feed').scrollIntoView({behavior:'smooth',block:'start'}), 100);
-}
-function resetFilter() {
-  currentFilter = '全部';
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector('.filter-btn[data-tag="全部"]').classList.add('active');
+async function submitToSupabase(tag,body){
+  const{error}=await sb.from('stories').insert({tag,body,status:'pending'});
+  if(error){showToast('发送失败，请重试');console.error(error);return;}
+  showToast('已收到 ✓ 审核后会出现在这里');
 }
 
-// ─── PAGE NAV ─────────────────────────────────────────────
-function showPage(name) {
-  document.getElementById('pageHome').classList.toggle('active', name==='home');
-  document.getElementById('pageHeal').classList.toggle('active', name==='heal');
-  document.getElementById('navHome').classList.toggle('active', name==='home');
-  document.getElementById('navHeal').classList.toggle('active', name==='heal');
-  window.scrollTo(0, 0);
+// ═══════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════
+let adminAuthed=false;
+function adminAuth(){
+  const pwd=document.getElementById('adminPwd').value;
+  if(pwd===ADMIN_PWD){adminAuthed=true;document.getElementById('adminLogin').style.display='none';document.getElementById('adminPanel').style.display='block';loadAdminData();}
+  else{showToast('密码错误');}
 }
-function scrollToFeed() { document.getElementById('feed').scrollIntoView({behavior:'smooth',block:'start'}); }
+function adminLogout(){adminAuthed=false;document.getElementById('adminLogin').style.display='block';document.getElementById('adminPanel').style.display='none';document.getElementById('adminPwd').value='';}
+function initAdmin(){if(adminAuthed)loadAdminData();}
 
-// ─── PRACTICE MODAL CLOSE ON BACKDROP ────────────────────
-document.getElementById('practiceModal').addEventListener('click', function(e) { if (e.target===this) closePractice(); });
-
-// ─── TOAST ───────────────────────────────────────────────
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+async function loadAdminData(){
+  const{data:all}=await sb.from('stories').select('*').order('created_at',{ascending:false});
+  if(!all)return;
+  const pending=all.filter(s=>s.status==='pending');
+  const approved=all.filter(s=>s.status==='approved');
+  const rejected=all.filter(s=>s.status==='rejected');
+  document.getElementById('adminStats').innerHTML=`
+    <div class="admin-stat"><div class="admin-stat-num">${pending.length}</div><div class="admin-stat-label">待审核</div></div>
+    <div class="admin-stat"><div class="admin-stat-num">${approved.length}</div><div class="admin-stat-label">已发布</div></div>
+    <div class="admin-stat"><div class="admin-stat-num">${rejected.length}</div><div class="admin-stat-label">已拒绝</div></div>`;
+  renderAdminList('pendingList',pending,true);
+  renderAdminList('approvedList',approved,false);
 }
 
-// ─── INIT ────────────────────────────────────────────────
-renderMethods();
-renderStories();
+function renderAdminList(containerId,items,showActions){
+  const c=document.getElementById(containerId);
+  if(!items.length){c.innerHTML=`<div class="admin-empty">${showActions?'暂无待审核内容':'暂无已发布内容'}</div>`;return;}
+  c.innerHTML='';
+  items.forEach(s=>{
+    const card=document.createElement('div');card.className='admin-card';
+    card.innerHTML=`<div class="admin-meta"><span>${s.tag}</span><span>${timeAgo(s.created_at)}</span><span>ID: ${s.id}</span></div><div class="admin-body">${esc(s.body)}</div>${showActions?`<div class="admin-actions"><button class="admin-btn admin-approve" onclick="adminAction(${s.id},'approved')">✓ 通过发布</button><button class="admin-btn admin-reject" onclick="adminAction(${s.id},'rejected')">✗ 拒绝</button></div>`:`<div class="admin-actions"><button class="admin-btn admin-reject" onclick="adminAction(${s.id},'rejected')">撤下</button></div>`}`;
+    c.appendChild(card);
+  });
+}
+
+async function adminAction(id,status){
+  const{error}=await sb.from('stories').update({status}).eq('id',id);
+  if(error){showToast('操作失败');return;}
+  showToast(status==='approved'?'已发布 ✓':'已拒绝');
+  loadAdminData();
+  if(status==='approved')loadStories();
+}
+
+// ═══════════════════════════════════
+// UTILS
+// ═══════════════════════════════════
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function timeAgo(ts){
+  const s=Math.floor((Date.now()-new Date(ts))/1000);
+  if(s<60)return '刚刚';if(s<3600)return `${Math.floor(s/60)} 分钟前`;
+  if(s<86400)return `${Math.floor(s/3600)} 小时前`;
+  if(s<604800)return `${Math.floor(s/86400)} 天前`;
+  return new Date(ts).toLocaleDateString('zh-CN',{month:'short',day:'numeric'});
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// BACKDROP
+document.getElementById('practiceModal').addEventListener('click',function(e){if(e.target===this)closePractice();});
+
+// INIT
+renderQuiz();renderMethods();loadStories();
 </script>
 </body>
 </html>
