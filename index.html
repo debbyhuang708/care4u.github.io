@@ -438,7 +438,7 @@ nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:.5px so
 // SUPABASE CONFIG
 // ═══════════════════════════════════
 const SUPABASE_URL = 'https://ddvmjmsbqyzcxbaukxep.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_rVlofiqBsDVZ6UpcZqh0nw_v7NGyTcr';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdm1qbXNicXl6Y3hiYXVreGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MDk0ODIsImV4cCI6MjA5MjQ4NTQ4Mn0.ZZyyi_XkJUk4dROHAL_cBMn8oZ_Uvx2a03KYcHOS0zo';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ═══════════════════════════════════
@@ -772,8 +772,17 @@ async function submitStory(){
   document.getElementById('cContent').value='';closeComposeModal();
   btn.disabled=false;btn.textContent='发出去';
 }
-async function submitToSupabase(tag,body){
-  const{error}=await sb.from('stories').insert({tag,body,status:'pending'});
+async function getCity() {
+  try {
+    const r = await fetch('https://ipapi.co/json/');
+    const d = await r.json();
+    return d.city || d.country_name || '某处';
+  } catch { return '某处'; }
+}
+
+async function submitToSupabase(tag, body) {
+  const loc = await getCity();
+  const{error}=await sb.from('stories').insert({tag,body,status:'pending',loc});
   if(error){showToast('发送失败，请重试');console.error(error);return;}
   showToast('已收到 ✓ 审核后会出现在这里');
 }
