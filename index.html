@@ -554,7 +554,7 @@ function renderQuiz(){
     c.appendChild(btn);
   });
 }
-function selectQuiz(idx,btn){
+function selectQuiz(idx,btn){ curQuizIdx=idx;
   document.querySelectorAll('.quiz-opt').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
   const q=QUIZ[idx],result=document.getElementById('quizResult'),recs=document.getElementById('quizRecs');
@@ -589,6 +589,51 @@ function renderMethods(){
 // PRACTICE ENGINE
 // ═══════════════════════════════════
 let curMethod=null,curStep=0,timerIv=null,blobAnim=null;
+let curQuizIdx = -1;
+
+// Music & warmth per quiz intent
+const MUSIC_MAP = [
+  { // 平复焦虑
+    words: '焦虑是身体在保护你，不是在攻击你。你已经做得很好了，光是愿意停下来呼吸，就已经是勇气。',
+    songs: [
+      { title: 'Weightless', artist: 'Marconi Union', why: '专为降低焦虑设计，被称为"世界上最放松的歌"', q: 'Marconi Union Weightless' },
+      { title: '告白气球', artist: '周杰伦', why: '轻盈明快，把心里的重量变轻一点', q: '告白气球 周杰伦' },
+      { title: 'Clair de Lune', artist: 'Debussy', why: '月光下的安静，让神经系统真正放松', q: 'Debussy Clair de Lune' },
+    ]
+  },
+  { // 处理积压情绪
+    words: '你愿意感受它，已经比很多人走得更远。情绪不是敌人，是一封还没被读完的信。',
+    songs: [
+      { title: '说散就散', artist: '陈奕迅', why: '把说不出口的感受，用音乐说出来', q: '说散就散 陈奕迅' },
+      { title: 'The Night Will Always Win', artist: 'Manchester Orchestra', why: '承认黑暗，但不被它淹没', q: 'Manchester Orchestra The Night Will Always Win' },
+      { title: '平凡之路', artist: '朴树', why: '接受不完美的自己，继续走', q: '平凡之路 朴树' },
+    ]
+  },
+  { // 疗愈童年
+    words: '那个小时候的你，已经尽力了。现在的你有能力回去看见他/她，这本身就是奇迹。',
+    songs: [
+      { title: '童年', artist: '罗大佑', why: '让记忆温柔地流过，不再那么尖锐', q: '童年 罗大佑' },
+      { title: 'Safe & Sound', artist: 'Taylor Swift', why: '告诉内在小孩：你是安全的', q: 'Taylor Swift Safe and Sound' },
+      { title: '慢慢喜欢你', artist: '莫文蔚', why: '学着慢慢喜欢那个曾经受伤的自己', q: '慢慢喜欢你 莫文蔚' },
+    ]
+  },
+  { // 建立安全感
+    words: '安全感不是别人给的，是你一次次告诉自己"我在"建立起来的。你今天又多建了一砖。',
+    songs: [
+      { title: 'Home', artist: 'Michael Bublé', why: '家不一定是地方，是一种感觉', q: 'Michael Buble Home' },
+      { title: '稳稳的幸福', artist: '陈奕迅', why: '不需要轰轰烈烈，稳稳的就很好', q: '稳稳的幸福 陈奕迅' },
+      { title: 'River Flows in You', artist: 'Yiruma', why: '平静而持续，像内心深处的安定', q: 'Yiruma River Flows in You' },
+    ]
+  },
+  { // 帮助睡眠
+    words: '今天你已经足够了。把所有的事情放下来，明天还会在那里，但现在属于你的休息。',
+    songs: [
+      { title: 'Comptine d'un autre été', artist: 'Yann Tiersen', why: '天使爱美丽的钢琴曲，让思绪慢慢安静', q: 'Yann Tiersen Comptine' },
+      { title: '夜空中最亮的星', artist: '逃跑计划', why: '在夜晚陪伴你，不那么孤单', q: '夜空中最亮的星 逃跑计划' },
+      { title: 'Experience', artist: 'Ludovico Einaudi', why: '极简钢琴，让大脑慢慢放空', q: 'Ludovico Einaudi Experience' },
+    ]
+  },
+];
 function openPractice(key){
   curMethod=METHODS[key];curStep=0;
   document.getElementById('pmTitle').textContent=curMethod.name;
@@ -629,8 +674,39 @@ function nextStep(){if(curStep<curMethod.steps.length-1){curStep++;renderDots();
 function prevStep(){if(curStep>0){curStep--;renderDots();renderStep();}}
 function completeMethod(){
   stopBreath();stopTimer();
-  document.getElementById('pmStepContent').innerHTML=`<div class="complete-block"><div class="complete-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="var(--ember)" stroke-width="1.5"><path d="M22 6L10 18l-6-6"/></svg></div><div class="complete-title">你做到了。</div><div class="complete-sub" style="margin-bottom:20px">每一次练习，都是给内在小孩的礼物。</div><div style="display:flex;justify-content:center;gap:10px"><button class="snb" onclick="closePractice()">结束</button><button class="snb next" onclick="closePractice();openComposeModal()">写下感受</button></div></div>`;
   document.querySelectorAll('.progress-dot').forEach(d=>{d.classList.remove('active');d.classList.add('done');});
+  const music = curQuizIdx >= 0 ? MUSIC_MAP[curQuizIdx] : null;
+  let musicHtml = '';
+  if(music){
+    const songs = music.songs.map(s=>`
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:.5px solid var(--border);">
+        <span style="font-size:16px;flex-shrink:0;margin-top:2px">🎵</span>
+        <span style="flex:1">
+          <span style="display:block;font-size:13px;font-weight:500;color:var(--text1)">${s.title}</span>
+          <span style="display:block;font-size:11px;color:var(--text3);margin-bottom:3px">${s.artist}</span>
+          <span style="display:block;font-size:12px;color:var(--text2);line-height:1.5">${s.why}</span>
+        </span>
+      </div>`).join('');
+    musicHtml = `
+      <div style="margin-top:20px;background:var(--surface);border-radius:12px;padding:16px 18px;">
+        <div style="font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">为你推荐的音乐</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:12px">在你喜欢的平台搜索歌名就能找到 ♪</div>
+        ${songs}
+      </div>`;
+  }
+  const warmth = music ? `<div style="font-family:'Noto Serif SC',serif;font-size:14px;font-weight:300;color:var(--text2);line-height:1.8;margin:16px 0 4px;padding:14px 16px;background:var(--tag-bg);border-radius:10px;border-left:2px solid var(--ember-light)">${music.words}</div>` : '';
+  document.getElementById('pmStepContent').innerHTML=`
+    <div class="complete-block">
+      <div class="complete-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="var(--ember)" stroke-width="1.5"><path d="M22 6L10 18l-6-6"/></svg></div>
+      <div class="complete-title">你做到了。</div>
+      <div class="complete-sub">每一次练习，都是给内在小孩的礼物。</div>
+      ${warmth}
+      ${musicHtml}
+      <div style="display:flex;justify-content:center;gap:10px;margin-top:20px">
+        <button class="snb" onclick="closePractice()">结束</button>
+        <button class="snb next" onclick="closePractice();openComposeModal()">写下感受</button>
+      </div>
+    </div>`;
 }
 function fmtTime(s){const m=Math.floor(s/60),r=s%60;return m>0?`${m}:${String(r).padStart(2,'0')}`:` ${s}s`;}
 function startTimer(total){
@@ -642,7 +718,16 @@ function startTimer(total){
     const el=document.getElementById('timerText'),ring=document.getElementById('timerRing');
     if(el)el.textContent=fmtTime(rem);
     if(ring)ring.style.strokeDashoffset=circ*(1-rem/total);
-    if(rem<=0){stopTimer();if(el)el.textContent='完成 ✓';showToast('这一步完成了 ✓');}
+    if(rem<=0){
+        stopTimer();
+        if(el)el.textContent='完成 ✓';
+        showToast('这一步完成了 ✓ 自动跳转中…');
+        setTimeout(()=>{
+          const isLast = curStep === curMethod.steps.length - 1;
+          if(isLast) completeMethod();
+          else nextStep();
+        }, 1200);
+      }
   },1000);
 }
 function resetTimer(total){
@@ -716,7 +801,7 @@ async function loadStories(){
     const el=document.createElement('div');
     el.className='story';el.style.animation=`storyIn .4s ${i*.05}s ease both`;
     const ago=timeAgo(s.created_at);
-    el.innerHTML=`<div class="story-meta"><span class="story-tag">${esc(s.tag)}</span><div class="story-dot"></div><span class="story-loc">${ago}</span></div><div class="story-body">${esc(s.body)}</div><div class="story-footer"><button class="story-action" onclick="likeStory(${s.id},${s.likes},this)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13s-6-3.5-6-7.5a4 4 0 0 1 6-3.44A4 4 0 0 1 14 5.5c0 4-6 7.5-6 7.5z"/></svg>我也是</button><button class="story-action" onclick="openComposeModal()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10c0 .55.45 1 1 1h2l2 3 2-3h4c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1z"/></svg>回应</button><span class="story-resonance">${s.likes.toLocaleString()} 人感同身受</span></div>`;
+    el.innerHTML=`<div class="story-meta"><span class="story-tag">${esc(s.tag)}</span><div class="story-dot"></div><span class="story-loc">${ago}</span></div><div class="story-body">${esc(s.body)}</div><div class="story-footer"><button class="story-action" onclick="likeStory(${s.id},${s.likes},this)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13s-6-3.5-6-7.5a4 4 0 0 1 6-3.44A4 4 0 0 1 14 5.5c0 4-6 7.5-6 7.5z"/></svg>我也是</button><button class="story-action" onclick="replyTo(this)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10c0 .55.45 1 1 1h2l2 3 2-3h4c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1z"/></svg>回应</button><span class="story-resonance">${s.likes.toLocaleString()} 人感同身受</span></div>`;
     list.appendChild(el);
   });
 }
@@ -754,7 +839,21 @@ async function quickSend(){
   qi.value='';qi.style.height='auto';sb2.disabled=true;
   await submitToSupabase('其他',v);
 }
-function openComposeModal(){document.getElementById('composeModal').classList.add('open');}
+// REPLY with quote
+function replyTo(btn){
+  const body = btn.closest('.story').querySelector('.story-body').textContent;
+  const snippet = body.length > 30 ? body.slice(0,30)+'…' : body;
+  openComposeModal('「' + snippet + '」\n\n');
+}
+function openComposeModal(prefill){
+  document.getElementById('composeModal').classList.add('open');
+  if(prefill){
+    const ta=document.getElementById('cContent');
+    ta.value=prefill;
+    ta.focus();
+    ta.setSelectionRange(prefill.length,prefill.length);
+  }
+}
 function closeComposeModal(){document.getElementById('composeModal').classList.remove('open');}
 document.getElementById('composeModal').addEventListener('click',function(e){if(e.target===this)closeComposeModal();});
 document.querySelectorAll('#cTags .ctag').forEach(btn=>{
