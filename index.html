@@ -850,6 +850,49 @@ document.getElementById('practiceModal').addEventListener('click',function(e){if
 
 // INIT
 renderQuiz();renderMethods();loadStories();
+
+// WELCOME
+function showWelcome(){
+  if(sessionStorage.getItem('welcomeSeen')) return;
+  setTimeout(function(){ document.getElementById('welcomeModal').classList.add('open'); }, 800);
+}
+function closeWelcome(){
+  document.getElementById('welcomeModal').classList.remove('open');
+  sessionStorage.setItem('welcomeSeen','1');
+}
+showWelcome();
 </script>
+
+<style>
+.welcome-overlay{display:none;position:fixed;inset:0;z-index:300;align-items:flex-end;justify-content:center;padding:0;pointer-events:none;}
+.welcome-overlay.open{display:flex;pointer-events:auto;}
+.welcome-card{background:var(--bg);border:.5px solid var(--border);border-radius:18px 18px 0 0;padding:24px 22px 32px;width:100%;max-width:540px;box-shadow:0 -8px 40px rgba(42,33,24,0.12);animation:slideUp .4s cubic-bezier(.34,1.2,.64,1) both;position:relative;transition:background .4s;}
+@media(min-width:600px){.welcome-overlay{align-items:flex-end;justify-content:flex-end;padding:0 24px 24px;}.welcome-card{border-radius:18px;max-width:360px;}}
+.welcome-drag{width:36px;height:4px;background:var(--border-mid);border-radius:2px;margin:0 auto 18px;}
+.welcome-close{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;background:var(--surface);border:.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--text3);transition:background .2s;}
+.welcome-close:hover{background:var(--surface2);color:var(--text1);}
+.welcome-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ember);background:var(--tag-bg);padding:3px 10px;border-radius:10px;margin-bottom:12px;}
+.welcome-title{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:400;color:var(--text1);line-height:1.4;margin-bottom:16px;}
+.welcome-items{display:flex;flex-direction:column;gap:10px;}
+.welcome-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text2);line-height:1.6;}
+.welcome-item-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+.welcome-item-text strong{color:var(--text1);font-weight:500;}
+</style>
+
+<div class="welcome-overlay" id="welcomeModal">
+  <div class="welcome-card">
+    <div class="welcome-drag"></div>
+    <div class="welcome-close" onclick="closeWelcome()">&#x2715;</div>
+    <div class="welcome-badge">&#x2728; 暖心更新</div>
+    <div class="welcome-title">Care4U 全新打磨<br>陪你更好地照顾自己</div>
+    <div class="welcome-items">
+      <div class="welcome-item"><span class="welcome-item-icon">&#x1F33F;</span><span class="welcome-item-text"><strong>呼吸动画全新升级</strong>&#xFF5C;软乎乎的动态轮廓跟着呼吸起伏，手机端全屏居中，沉浸式平复情绪</span></div>
+      <div class="welcome-item"><span class="welcome-item-icon">&#x1F319;</span><span class="welcome-item-text"><strong>深色 / 浅色模式上线</strong>&#xFF5C;右上角一键切换，暖棕黑深色像冬日壁炉，夜晚浏览更安心</span></div>
+      <div class="welcome-item"><span class="welcome-item-icon">&#x1F48C;</span><span class="welcome-item-text"><strong>专属治愈匹配</strong>&#xFF5C;选一个你当下的需求，立刻推荐最适配的治愈方法</span></div>
+      <div class="welcome-item"><span class="welcome-item-icon">&#x1F4AC;</span><span class="welcome-item-text"><strong>评论功能已修复</strong>&#xFF5C;放心留下你的声音，我会用心守护这里的温暖</span></div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
+
